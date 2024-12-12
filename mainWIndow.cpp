@@ -329,7 +329,7 @@ void ui::DPPressed() {
 		;
 	left->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
 	right->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	QLabel* t1 = new QLabel("Г",left);
+	QLabel* t1 = new QLabel("Г",left); 
 	QLabel* t2 = new QLabel("Б", right);
 
 	QWidget* leftMain = new QWidget(dialog); QGridLayout* leftLMain = new QGridLayout(leftMain);
