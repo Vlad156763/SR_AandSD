@@ -66,13 +66,13 @@ ui::ui(QWidget* parent) :QWidget(parent) {
 	this->mainLayout->addWidget(GraphAlg, 2, 1);
 } 
 void ui::piramidalSortPressed() {
-	cout <<  "Пірамідальне сортування" << endl;
+	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Пірамідальне сортування " << out::reset << out::endl;
 }
 void ui::structDataPressed() {
-	cout << "Структури данних" << endl;
+	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Структури данних " << out::reset << out::endl;
 }
 void ui::spearAlgPressed() {
-	cout << "Жадібні алгоритми" << endl << endl;
+	cout << out::rgbT(0,0,0) << out::rgbB(23,103,99) << " Жадібні алгоритми " << out::reset << out::endl;
 	QDialog* dialog = new QDialog(this);
 	QGridLayout* dialogLayout = new QGridLayout(dialog);
 	dialog->setWindowTitle("Жадібні алгоритми");
@@ -86,14 +86,14 @@ void ui::spearAlgPressed() {
 		" вид спецій на континенті, приблизно оцінивши наявну кількість" <<
 		" кожного виду спецій та знаючи, яку кількість вантажу вмістять вільні" <<
 		" трюми, капітан пішов на переговори з туземцями.Визначте" <<
-		" оптимальне рішення для капітана." << endl;
+		" оптимальне рішення для капітана." << out::endl;
 	QWidget* leftIndividualTask = new QWidget(dialog);
 	QWidget* RightHapman = new QWidget(dialog);
-	QGridLayout* leftIndividualTaskLayout = new QGridLayout(leftIndividualTask);
 	QGridLayout* RightHapmanLayout = new QGridLayout(RightHapman);
+	QLabel* titleRight = new QLabel("Хафман", RightHapman);
+	QGridLayout* leftIndividualTaskLayout = new QGridLayout(leftIndividualTask);
 
 	QLabel* titleLeft = new QLabel("Завдання", leftIndividualTask);
-	QLabel* titleRight = new QLabel("Хафман", RightHapman);
 
 	QWidget* mainSideleft = new QWidget(leftIndividualTask);
 	QGridLayout* mainSideleftLayout = new QGridLayout(mainSideleft);
@@ -102,6 +102,13 @@ void ui::spearAlgPressed() {
 	
 	titleLeft->setFixedHeight(50);
 	titleRight->setFixedHeight(50);
+	QWidget* mainRightSide = new QWidget(RightHapman);
+	QGridLayout* mainRightSideLayout = new QGridLayout(mainRightSide);
+	QLabel* textInLeftSide = new QLabel("Введіть текст, щоб перевірити стискання файлу\n(Ваш текст буде записано у файл, який буде стиснуто)", mainRightSide);
+	textInLeftSide->setAlignment(Qt::AlignCenter);
+	QTextEdit* RightTextIn = new QTextEdit(mainRightSide);
+	QPushButton* squeezeInputText = new QPushButton("Записати та стиснути", mainRightSide);
+	QTextEdit* RightTextOut = new QTextEdit(mainRightSide);
 	QString cssEditLine =
 		"QLineEdit {"
 		"   background-color: rgb(70,70,70);"
@@ -124,9 +131,10 @@ void ui::spearAlgPressed() {
 		"	outline:none;"
 		"}"
 		"QScrollBar::handle:vertical {"
-		"    background: rgb(64,64,160);"
+		"    background: rgb(63,143,139);"
 		"    min-height: 10px;"
 		"    border-radius: 4px;"
+		"    margin: 2px;"
 		"}"
 		"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
 		"    height: 0px;"
@@ -147,26 +155,111 @@ void ui::spearAlgPressed() {
 		"	background-color: rgb(90,90,90);"
 		"	border-radius: 5px;"
 		"}";
+	QString CssButton =
+		"QPushButton {"
+		"	background-color: rgb(70,70,70);"
+		"	border-radius: 5px;"
+		"	color: #ffffff;"
+		"	font-weight: bold;"
+		"	border: none;"
+		"	padding: 10px;"
+		"}"
+		"QPushButton:focus {"
+		"   outline: 0px;"
+		"}"
+		"QPushButton:hover {"
+		"	background-color: rgb(120, 120,120);"
+		"}";
 	leftIndividualTask->setStyleSheet(CSS);
 	RightHapman->setStyleSheet(CSS);
 	titleLeft->setStyleSheet(cssTitle);
 	titleRight->setStyleSheet(cssTitle);
-	
-
+	RightTextIn->setStyleSheet(cssEditText);
+	RightTextOut->setStyleSheet(cssEditText);
 	dialogLayout->setColumnStretch(0, 1);
 	dialogLayout->setColumnStretch(1, 1);
 	dialogLayout->addWidget(leftIndividualTask, 0, 0);
 	dialogLayout->addWidget(RightHapman, 0, 1);
 	mainSideleftLayout->setColumnStretch(0, 1);
 	mainSideleftLayout->setColumnStretch(1, 2);
-
+	squeezeInputText->setStyleSheet(CssButton);
 	mainSideleftLayout->setAlignment(Qt::AlignTop);
 	leftIndividualTaskLayout->setAlignment(Qt::AlignTop);
 	leftIndividualTaskLayout->addWidget(titleLeft, 0, 0, Qt::AlignTop);
 	leftIndividualTaskLayout->addWidget(mainSideleft, 1, 0, Qt::AlignTop);
+	RightHapmanLayout->setAlignment(Qt::AlignTop);
+	RightHapmanLayout->addWidget(mainRightSide, 1,0, Qt::AlignTop);
+	mainRightSideLayout->setAlignment(Qt::AlignTop);
 	RightHapmanLayout->addWidget(titleRight, 0, 0, Qt::AlignTop);
+	mainRightSideLayout->addWidget(textInLeftSide, 0, 0, Qt::AlignTop);
+	mainRightSideLayout->addWidget(RightTextIn, 1, 0, 1, 2, Qt::AlignTop);
+	mainRightSideLayout->addWidget(squeezeInputText, 2, 0,1, 2, Qt::AlignTop);
+	mainRightSideLayout->addWidget(RightTextOut, 3, 0, 1, 2, Qt::AlignTop);
 
-	
+	RightTextOut->setFont(QFont("Courier"));
+	connect(squeezeInputText, &QPushButton::released, [RightTextIn, RightTextOut, dialog]() {
+		//читання введених данних
+		//запис у файл
+		//зжимання файлу
+		//декодування файлу
+		
+		fstream file;
+		auto ok = [RightTextOut]() mutable {
+			RightTextOut->insertPlainText("[ ");
+			RightTextOut->setTextColor(QColor(0, 255, 0));
+			RightTextOut->insertPlainText("  OK  ");
+			RightTextOut->setTextColor(QColor(255, 255, 255));
+			RightTextOut->insertPlainText(" ]:  ");
+			};
+		auto failed = [RightTextOut]() mutable {
+			RightTextOut->insertPlainText("[ ");
+			RightTextOut->setTextColor(QColor(255, 0, 0));
+			RightTextOut->insertPlainText("FAILED");
+			RightTextOut->setTextColor(QColor(255, 255, 255));
+			RightTextOut->insertPlainText(" ]:  ");
+			};
+		QString just = "          :  ";
+		
+		RightTextOut->insertPlainText(just + "Спроба відкрити файл для запису\n");
+		file.open("dataHuffMan.txt", std::ios::out | std::ios::trunc);
+		if (!file.is_open()) {
+			QMessageBox::critical(dialog, "Помилка", "\nНевдалось відкрити файл для запису");
+			failed(); RightTextOut->insertPlainText("Невдалось відкрити файл для запису\n");
+			return;
+		}
+		ok(); RightTextOut->insertPlainText("Файл відкрито для запису\n");
+		RightTextOut->insertPlainText(just + "Запис данних\n");
+		file << RightTextIn->toPlainText().toStdString();
+		ok(); RightTextOut->insertPlainText("Данні записані у файл\n");
+		file.close();
+		RightTextOut->insertPlainText(just + "Спроба відкрити файл для читання\n");
+		file.open("dataHuffMan.txt", std::ios::in);
+		if (!file.is_open()) {
+			QMessageBox::critical(dialog, "Помилка", "\nНевдалось відкрити файл для читання");
+			failed(); RightTextOut->insertPlainText("Невдалось відкрити файл для читання\n");
+
+			return;
+		}
+		ok(); RightTextOut->insertPlainText("Файл відкрито для читання\n");
+
+		//відкриваю цей же файл для стискання
+		methodHuffman qa;
+		RightTextOut->insertPlainText(just + "Стискання файлу\n");
+		qa.Squeeze(file, "data");
+		ok(); RightTextOut->insertPlainText("Данні стиснуті (див. у файлах)\n");
+		file.close();
+		RightTextOut->insertPlainText(just + "Декодування стиснених данних\n");
+		string input = qa.Decoder("data");
+		ok(); RightTextOut->insertPlainText("Данні успішно декодовані\n");
+
+		RightTextOut->insertPlainText("Вивід декодованих данних:\n");
+		RightTextOut->insertPlainText(QString::fromStdString(input));
+		cout << input;
+	});
+
+	RightTextIn->setFixedHeight(200);
+	RightTextOut->setFixedHeight(300);
+	textInLeftSide->setStyleSheet(csslabel);
 
 	QLabel* l1 = new QLabel("Вміст трюму (в тоннах)", mainSideleft);
 	l1->setAlignment(Qt::AlignCenter );
@@ -203,22 +296,7 @@ void ui::spearAlgPressed() {
 
 	QPushButton* b1 = new QPushButton("Результат", mainSideleft);
 	mainSideleftLayout->addWidget(b1, 5, 0, 1, 2);
-	b1->setStyleSheet(
-		"QPushButton {"
-		"	background-color: rgb(70,70,70);"
-		"	border-radius: 5px;"
-		"	color: #ffffff;"
-		"	font-weight: bold;"
-		"	border: none;"
-		"	padding: 10px;"
-		"}"
-		"QPushButton:focus {"
-		"   outline: 0px;"
-		"}"
-		"QPushButton:hover {"
-		"	background-color: rgb(120, 120,120);"
-		"}"
-	);
+	b1->setStyleSheet(CssButton);
 
 	QTextEdit* te2 = new QTextEdit(mainSideleft);
 	te2->setDisabled(true);
@@ -238,7 +316,7 @@ void ui::spearAlgPressed() {
 			return;
 		}
 		QString te1Text = te1->toPlainText();
-		QStringList prodPriceKg = te1Text.split('/');
+		QStringList prodPriceKg = te1Text.split(QRegularExpression("[|\\n/\\\\]"));
 		te2->clear();
 		while (true) {
 			double maxPriceInHome = 0;
@@ -257,6 +335,7 @@ void ui::spearAlgPressed() {
 			priceAllProd += (NumkgProduct * prodPriceKg[ImaxPrice].toDouble());
 			budget -= (NumkgProduct * priceNatives);
 			t -= (NumkgProduct / 1000);
+			te2->setFont(QFont("Courier"));
 			te2->insertPlainText(prodPriceKg[ImaxPrice - 1] + ": ");
 			te2->setTextColor(QColor(127, 127, 255));
 			te2->insertPlainText(QString::number(NumkgProduct / 1000));
@@ -274,7 +353,7 @@ void ui::spearAlgPressed() {
 
 		}
 
-		te2->insertPlainText("Об'єм трюму що залишився:   "); te2->setTextColor(QColor(127,127,255)); te2->insertPlainText(QString::number(t)); 
+		te2->insertPlainText("Об'єм трюму що залишився: "); te2->setTextColor(QColor(127,127,255)); te2->insertPlainText(QString::number(t)); 
 		te2->setTextColor(QColor(255, 255, 255)); te2->insertPlainText(" т\n");
 		te2->insertPlainText("Бюджет що залишився:      ");	te2->setTextColor(QColor(127,127,255)); te2->insertPlainText(QString::number(budget));
 		te2->setTextColor(QColor(255, 255, 255)); te2->insertPlainText(" грн\n");
@@ -288,14 +367,15 @@ void ui::spearAlgPressed() {
 	dialog->exec();
 }
 void ui::DPPressed() {
-	cout << "Динамічне програмування" << endl << endl;
+	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Динамічне програмування " << out::reset << out::endl;
+
 	cout
 		<< "Задача 1-Г. \nРядок складається з символів української абетки.У"
 		<< " загальному випадку такий рядок представляє собою слово"
 		<< " українською мовою.Визначити довжину найдовшого паліндрома"
 		<< " (непорожній рядок, який однаково читається як зліва направо, так і"
 		<< " справа наліво), який можна утворити шляхом вилучення деяких літер"
-		<< " даного рядка, та вивести безпосередньо сам паліндром."; cout << endl;
+		<< " даного рядка, та вивести безпосередньо сам паліндром."; cout << out::endl;
 	cout
 		<< "Задача 2-Б.\nКомпанія здає автомобіль престижного класу в оренду.В"
 		<< " один робочий день було отримано n заявок для оренди.У кожній"
@@ -304,7 +384,7 @@ void ui::DPPressed() {
 		<< " відповідному інтервалу часу відповідає сума коштів pi, яку отримає"
 		<< " компанія за оренду.Визначити таке рішення з надання даного"
 		<< " автомобіля в оренду за заявками, яке дозволить отримати"
-		<< " максимальний прибуток."; cout << endl;
+		<< " максимальний прибуток."; cout << out::endl;
 	QDialog* dialog = new QDialog(this);
 	QGridLayout* dialogLayout = new QGridLayout(dialog);
 	dialog->setWindowTitle("Динамічне програмування");

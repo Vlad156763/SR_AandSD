@@ -11,8 +11,15 @@
 #include <qmessagebox.h>
 #include <qstring.h>	
 #include <qstringlist.h>
+#include <qregularexpression.h>
+#include <qfont.h>
+
+#include "lib/algorithms.h"
+#include "lib/Console.h"
+#include "lib/exceptions.h"
+#include <fstream>
+
 using std::cout;
-using std::endl;
 class ui :public QWidget {
 private:
 	QGridLayout* mainLayout = nullptr;
