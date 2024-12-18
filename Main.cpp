@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+#include <test.h>
 #include "lib/Console.h"
 #include "lib/exceptions.h"
 #include "mainWIndow.h"
@@ -14,19 +15,21 @@ int main(int argc, char** argv) {
 		app.exit();
 	};
 	auto YesDebug = [&]() {
-		cout << "Nothing to work!" << out::endl;
+		__test t;
+		t.show();
 	};
 	do {
 		std::string debug;
-		std::cout << "DEBUG [y/n]: " << std::endl;//\
+		std::cout << "DEBUG [y/n or end]: ";//
 		std::cin >> debug;//
-		debug = "n";
 		if (debug == "y" || debug == "Y" || debug == "yes" || debug == "YES" || debug == "Yes") {
 			YesDebug();
-			break;
+
 		}
 		else if (debug == "n" || debug == "N" || debug == "no" || debug == "NO" || debug == "No")  {
 			NoDebug();
+		}
+		else if (debug == "end" || debug == "END" || debug == "End") {
 			break;
 		}
 		else {

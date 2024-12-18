@@ -30,7 +30,13 @@ void methodHuffman::Squeeze(fstream& fileName, const string& fileNameToSqueze) {
 	//присвоєння у хешТаблиці кодів 
 	unordered_map<char, vector<bool>> chCode;
 	vector<bool> tmp;
-	this->fillCharCodes(pq.top(), chCode, &tmp);
+	if (this->order.size() == 1) {
+		tmp.push_back(true);
+		chCode[pq.top()->ch] = tmp;
+	}
+	else {
+		this->fillCharCodes(pq.top(), chCode, &tmp);
+	}
 	//відкриваю бінарний файл
 	fstream fileToSqueze;
 	fstream fileTableDecoding;

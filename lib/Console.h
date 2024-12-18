@@ -1,5 +1,6 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
+#define NOMINMAX
 #include <iostream>
 #include <string>
 #include <Windows.h>

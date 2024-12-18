@@ -198,11 +198,8 @@ void ui::spearAlgPressed() {
 
 	RightTextOut->setFont(QFont("Courier"));
 	connect(squeezeInputText, &QPushButton::released, [RightTextIn, RightTextOut, dialog]() {
-		//читання введених данних
-		//запис у файл
-		//зжимання файлу
-		//декодування файлу
-		
+		RightTextOut->clear();
+		if (RightTextIn->toPlainText().size() == 0) { QMessageBox::critical(dialog, "Помилка", "\nРядок не може бути пустим"); return; }
 		fstream file;
 		auto ok = [RightTextOut]() mutable {
 			RightTextOut->insertPlainText("[ ");
@@ -254,7 +251,8 @@ void ui::spearAlgPressed() {
 
 		RightTextOut->insertPlainText("Вивід декодованих данних:\n");
 		RightTextOut->insertPlainText(QString::fromStdString(input));
-		cout << input;
+		RightTextOut->insertPlainText("\n");
+		cout << input << out::endl;
 	});
 
 	RightTextIn->setFixedHeight(200);
@@ -299,7 +297,6 @@ void ui::spearAlgPressed() {
 	b1->setStyleSheet(CssButton);
 
 	QTextEdit* te2 = new QTextEdit(mainSideleft);
-	te2->setDisabled(true);
 	te2->setStyleSheet(cssEditText);
 	
 	mainSideleftLayout->addWidget(te2, 6, 0, 1, 2);
@@ -363,7 +360,7 @@ void ui::spearAlgPressed() {
 		te2->setTextColor(QColor(255, 255, 255)); te2->insertPlainText(" грн\n");
 		}
 	);
-	dialog->setFixedSize(700, 700);
+	dialog->setFixedSize(800, 700);
 	dialog->exec();
 }
 void ui::DPPressed() {
@@ -379,7 +376,7 @@ void ui::DPPressed() {
 	cout
 		<< "Задача 2-Б.\nКомпанія здає автомобіль престижного класу в оренду.В"
 		<< " один робочий день було отримано n заявок для оренди.У кожній"
-		<< " заявці 1≤ ≤i n визначено проміжок часу(si, fi), протягом якого клієнт"
+		<< " заявці визначено проміжок часу(si, fi), протягом якого клієнт"
 		<< " бажає використовувати автомобіль.При цьому кожній такій заявці та"
 		<< " відповідному інтервалу часу відповідає сума коштів pi, яку отримає"
 		<< " компанія за оренду.Визначити таке рішення з надання даного"
@@ -388,7 +385,7 @@ void ui::DPPressed() {
 	QDialog* dialog = new QDialog(this);
 	QGridLayout* dialogLayout = new QGridLayout(dialog);
 	dialog->setWindowTitle("Динамічне програмування");
-	dialog->setFixedSize(700, 700);
+	dialog->setFixedSize(800, 700);
 	dialog->setStyleSheet(
 		"#QDialog { background-color: rgb(30,30,30); }"
 	);
@@ -407,8 +404,56 @@ void ui::DPPressed() {
 		"	padding: 10px;"
 		"}"
 		;
-	left->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
-	right->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
+	QString cssEditLine =
+		"QLineEdit {"
+		"   background-color: rgb(70,70,70);"
+		"	color: #ffffff;"
+		"	border-radius: 5px;"
+		"	padding: 5px;"
+		"}"
+		"QLineEdit:focus {"
+		"	outline:none;"
+		"}"
+		;
+	QString CssButton =
+		"QPushButton {"
+		"	background-color: rgb(70,70,70);"
+		"	border-radius: 5px;"
+		"	color: #ffffff;"
+		"	font-weight: bold;"
+		"	border: none;"
+		"	padding: 10px;"
+		"}"
+		"QPushButton:focus {"
+		"   outline: 0px;"
+		"}"
+		"QPushButton:hover {"
+		"	background-color: rgb(120, 120,120);"
+		"}";
+	QString cssEditText =
+		"QTextEdit {"
+		"   background-color: rgb(70,70,70);"
+		"	color: #ffffff;"
+		"	border-radius: 5px;"
+		"	padding: 5px;"
+		"}"
+		"QTextEdit:focus {"
+		"	outline:none;"
+		"}"
+		"QScrollBar::handle:vertical {"
+		"    background: rgb(63,143,139);"
+		"    min-height: 10px;"
+		"    border-radius: 4px;"
+		"    margin: 2px;"
+		"}"
+		"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+		"    height: 0px;"
+		"}"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
+		"    background: none;" //ось це прибирає прозорість блоку, де знаходиться повзунок 
+		"}"
+		;
+	QString csslabel = "QLabel { font-weight: bold;}";
 	QLabel* t1 = new QLabel("Г",left); 
 	QLabel* t2 = new QLabel("Б", right);
 
@@ -430,14 +475,125 @@ void ui::DPPressed() {
 	rightL->addWidget(rightMain, 1, 0);
 	dialogLayout->addWidget(left, 0, 0);
 	dialogLayout->addWidget(right, 0, 1);
-	leftMain->setStyleSheet("QWidget { background-color: rgb(129, 20, 200); }");
-	rightMain->setStyleSheet("QWidget { background-color: rgb(129, 20, 200); }");
-	/*
-	leftLMain
-	rightLMain
 
-	leftMain
-	rightMain
-	*/
+	QLabel* InputLabelInfo = new QLabel("Введіть набір символів \nукраїнської абетки", leftMain);
+	QLabel* ResultPalindrom = new QLabel(leftMain);
+	QLineEdit* InputText = new QLineEdit(leftMain);
+	QPushButton* GetTextButton = new QPushButton("Знайти найдовший паліндром", leftMain);
+	QTextEdit* Result = new QTextEdit(leftMain);
+	GetTextButton->setStyleSheet(CssButton);
+	InputText->setStyleSheet(cssEditLine);
+	InputLabelInfo->setStyleSheet(csslabel);
+	InputLabelInfo->setAlignment(Qt::AlignCenter);
+	leftLMain->addWidget(InputLabelInfo, 0, 0, Qt::AlignTop);
+	leftLMain->addWidget(InputText, 1, 0, Qt::AlignTop);
+	leftLMain->addWidget(GetTextButton, 2, 0, Qt::AlignTop);
+	leftLMain->addWidget(Result, 3, 0, Qt::AlignTop);
+	Result->setStyleSheet(cssEditText);
+	connect(GetTextButton, &QPushButton::released, [InputText, Result, dialog]() {
+		QString text = InputText->text();
+		QString resultText;
+		QVector<QString> reverseResultFragment;
+		if (text.size() == 0) {
+			QMessageBox::critical(dialog, "Помилка", "\nРядок не може бути пустим");
+			return;
+		}
+		if (text.size() == 1) {
+			Result->clear();
+			Result->insertPlainText(text);
+		}
+		else {
+			QVector<QVector<int>> dp(text.size(), QVector<int>(text.size(), 0));
+			auto OutTable = [&dp]() {
+				for (QVector<int> row : dp) {
+					for (int cell : row) {
+						cout <<
+							(cell == 0? out::rgbT(0, 0, 0) + out::rgbB(255, 255, 255)
+								: (cell != 1 && cell != 0)? out::rgbT(0, 255, 0)
+								: out::reset) << cell << out::reset << ' ';
+					}
+					cout << out::endl;
+				}
+				};
+			//заповнення таблиці
+			//заповнюю головну діагональ одиницями	
+			for (int i = 0; i < text.size(); i++) {
+				dp[i][i] = 1;
+			}
+			cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Логи для перевірки завдання Г " << out::reset << out::endl;
+			cout << "Все що буде виведено далі є таблицею яка потрібна для визначення найдовшого паліндрому"
+				<< " шляхом проходження від: [0][n - 1] де n це довжина введених данних, до max([i + 1][j], [i][j-1]) і якщо символ у підрядку"
+				<< " [i] == [j] то даний символ записується у вихідний паліндром." << out::endl;
+			cout << out::move(out::getRow(), (out::getCol() + ((text.size() + (text.size() - 1)) / 2)));
+			cout << 0 << out::endl;
+			OutTable(); cout << out::endl;
+			for (int i = 0; i + 1 < text.size(); i++) {
+				for (int j = 0; j + i + 1 < text.size(); j++) {
+					int maxNumber = std::max(dp[j + 1][j + i + 1], dp[j][j + i]);
+					if (text[j] == text[j + i + 1]) {
+						maxNumber += 2;
+					}
+					dp[j][j + i + 1] = maxNumber;
+				}
+				cout << out::move(out::getRow(), (out::getCol() + ((text.size() + (text.size() - 1)) / 2)));
+				cout << i + 1 << out::endl;
+				OutTable(); cout << out::endl;
+			}
+			for (int i = 0, j = (text.size() - 1); true; i++, j--) {
+				if (i == j) {
+					resultText = resultText + text[i];
+					for (const auto& ch : reverseResultFragment) {
+						resultText = resultText + ch;
+					}
+					break;
+				}
+				if (text[i] == text[j]) {
+					resultText = resultText + text[i];
+					reverseResultFragment.push_front(text[i]);
+				}
+				else {
+					if (dp[i][j - 1] >= dp[i + 1][j]) { i--; }
+					else { j++; }
+				}
+			}
+			Result->clear();
+			Result->insertPlainText(resultText);
+		}
+		});
+	/*
+rightLMain
+rightMain
+*/
+	QLabel* TextInfoRightMain = new QLabel("Ведіть заявки дотримуючись інструкцій", rightMain);
+	QLabel* InstructionRightMain = new QLabel("1. Компанія надає одне авто\n2. Компанія надає одне авто на завтрашній день\n3. Вказувати ім'я, час оренди та ціну як у прикладі нижче", rightMain);
+	TextInfoRightMain->setAlignment(Qt::AlignCenter);
+	QTextEdit* MainInputArearight = new QTextEdit(rightMain); 
+	MainInputArearight->setFont(QFont("Courier"));
+	MainInputArearight->setPlaceholderText(
+		"Ігор миколайович\n"
+		"12:00 - 14:30\n"
+		"20000\n"
+		"\n"
+		"Анна Василівна\n"
+		"13:00 - 14 : 30\n"
+		"50000\n"
+	);
+	QPushButton* SaveInputData = new QPushButton("Визначити найприбутковіші заявки", rightMain);
+
+	connect(SaveInputData, &QPushButton::released, [MainInputArearight]() {
+		cout << MainInputArearight->toPlainText().toStdString();
+		});
+
+	TextInfoRightMain->setStyleSheet(csslabel);
+	MainInputArearight->setStyleSheet(cssEditText);
+	SaveInputData->setStyleSheet(CssButton);
+	InstructionRightMain->setStyleSheet(csslabel);
+
+	rightLMain->addWidget(TextInfoRightMain, 0, 0, Qt::AlignTop);
+	rightLMain->addWidget(InstructionRightMain, 1, 0, Qt::AlignTop);
+	rightLMain->addWidget(MainInputArearight, 2, 0, Qt::AlignTop);
+	rightLMain->addWidget(SaveInputData, 3, 0, Qt::AlignTop);
+
+
 	dialog->exec();
 }

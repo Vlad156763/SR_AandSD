@@ -13,6 +13,7 @@
 #include <qstringlist.h>
 #include <qregularexpression.h>
 #include <qfont.h>
+#include <qvector.h>
 
 #include "lib/algorithms.h"
 #include "lib/Console.h"
@@ -20,6 +21,7 @@
 #include <fstream>
 
 using std::cout;
+
 class ui :public QWidget {
 private:
 	QGridLayout* mainLayout = nullptr;
