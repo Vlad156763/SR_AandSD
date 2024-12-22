@@ -19,7 +19,9 @@
 #include "lib/algorithms.h"
 #include "lib/Console.h"
 #include "lib/exceptions.h"
+
 #include <fstream>
+#include <iomanip>
 
 using std::cout;
 #define cqdout qDebug()

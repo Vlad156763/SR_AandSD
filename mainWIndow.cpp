@@ -690,6 +690,8 @@ rightMain
 				}
 			}
 		}
+		cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Логи для перевірки завдання Б " << out::reset << out::endl;
+		cout << "Все що буде виведенео далі є таблицею найприбутковіших значень для і-ї заявки" << out::endl;
 		//заповнення таблиці dp загальним максимальним прибутком 
 		for (int i = 0; i < Papka.size(); ++i) {
 			int include = Papka[i].getPrice(); //дохід від поточної заявки
@@ -697,7 +699,12 @@ rightMain
 				include += dp[prev[i]]; //сума доходів з поточною та з попередньою
 			}
 			int exclude = (i > 0) ? dp[i - 1] : 0;
-			dp[i] = (include < exclude)? exclude : include; 
+			dp[i] = (include < exclude) ? exclude : include;
+			cout << i + 1 << "." << out::rgbB(100, 100, 200) << " " << out::reset;
+			for (int j = 0; j < dp.size(); j++) {
+				cout << ((dp[j] == 0) ? out::rgbB(255, 255, 255) + out::rgbT(0, 0, 0) : out::rgbT(0, 255, 0)) << std::setw(8) <<dp[j] << out::reset + out::rgbB(100,100,200) << " " << out::reset;
+			}
+			cout << out::endl;
 		}
 		//розбір таблиці dp для виводу найприбутковіших заявок
 		MainRightOutput->insertPlainText("Прибуток: " + QString::number(dp[dp.size() - 1]) + '\n');
