@@ -14,6 +14,7 @@
 #include <qregularexpression.h>
 #include <qfont.h>
 #include <qvector.h>
+#include <qdebug.h>
 
 #include "lib/algorithms.h"
 #include "lib/Console.h"
@@ -21,6 +22,7 @@
 #include <fstream>
 
 using std::cout;
+#define cqdout qDebug()
 
 class ui :public QWidget {
 private:

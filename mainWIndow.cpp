@@ -565,10 +565,12 @@ rightLMain
 rightMain
 */
 	QLabel* TextInfoRightMain = new QLabel("Ведіть заявки дотримуючись інструкцій", rightMain);
-	QLabel* InstructionRightMain = new QLabel("1. Компанія надає одне авто\n2. Компанія надає одне авто на завтрашній день\n3. Вказувати ім'я, час оренди та ціну як у прикладі нижче", rightMain);
+	QLabel* InstructionRightMain = new QLabel("1. Компанія надає одне авто на завтрашній день\n2. Вказувати ім'я, час оренди та ціну як у прикладі нижче", rightMain);
 	TextInfoRightMain->setAlignment(Qt::AlignCenter);
 	QTextEdit* MainInputArearight = new QTextEdit(rightMain); 
+	QTextEdit* MainRightOutput = new QTextEdit(rightMain);
 	MainInputArearight->setFont(QFont("Courier"));
+	MainRightOutput->setFont(QFont("Courier"));
 	MainInputArearight->setPlaceholderText(
 		"Ігор миколайович\n"
 		"12:00 - 14:30\n"
@@ -580,19 +582,149 @@ rightMain
 	);
 	QPushButton* SaveInputData = new QPushButton("Визначити найприбутковіші заявки", rightMain);
 
-	connect(SaveInputData, &QPushButton::released, [MainInputArearight]() {
-		cout << MainInputArearight->toPlainText().toStdString();
+	connect(SaveInputData, &QPushButton::released, [MainInputArearight, MainRightOutput, dialog]() {
+		MainRightOutput->clear();
+		QString InputText = MainInputArearight->toPlainText();
+		QStringList listZaiv = InputText.split("\n");
+		if (listZaiv.size() % 4 != 0) {
+			QMessageBox::warning(dialog, "Попередження", "\nВведено не вірні данні!");
+			return;
+		}
+		QRegularExpression testName("^[A-Za-zа-яА-ЯІіЇїЄєґҐ ]+$");
+		QRegularExpression testInterval("^\\d{2}:\\d{2} - \\d{2}:\\d{2}$");
+		QRegularExpression testPrice("^\\d+$");
+		struct zaijava {
+		private:
+			QString Name;
+			QString Interval;
+			int startInterval = -1;
+			int endInterval = -1;
+			int Price = -1;
+		public:
+			zaijava(const QString& Name, const QString& Interval, const QString& Price) {
+				this->Name = Name;
+				this->Interval = Interval;
+				this->Price = Price.toInt();
+			}
+			zaijava() {}
+			QString getName() const { return this->Name; }
+			QString getInterval() const { return this->Interval; }
+			int getPrice() const { return this->Price; }
+			int getEndInterval() const { return this->endInterval; }
+			int getStartInterval() const { return this->startInterval; }
+			void convertInterval() {
+				QString formatTime;
+				QString buffer;
+				try {
+					formatTime.push_back(Interval[0]);
+					formatTime.push_back(Interval[1]);
+					if (formatTime.toInt() > 23) { throw ex(1, "Невірно введені години"); }
+					formatTime.push_back(Interval[3]);
+					formatTime.push_back(Interval[4]);
+					buffer.push_back(Interval[3]);
+					buffer.push_back(Interval[4]);
+					if (buffer.toInt() > 60) { throw ex(2, "Невірно введені хвилини"); }
+					this->startInterval = formatTime.toInt();
+					formatTime.clear();
+					buffer.clear();
+
+					formatTime.push_back(Interval[8]);
+					formatTime.push_back(Interval[9]);
+					if (formatTime.toInt() > 23) { throw ex(1, "Невірно введені години"); }
+					formatTime.push_back(Interval[11]);
+					formatTime.push_back(Interval[12]);
+					buffer.push_back(Interval[11]);
+					buffer.push_back(Interval[12]);
+					if (buffer.toInt() > 60) { throw ex(2, "Невірно введені хвилини"); }
+					this->endInterval = formatTime.toInt();
+					if (this->startInterval >= this->endInterval) throw ex(3, "Невірно вказаний інтервал");
+				}
+				catch (const ex& err) {
+					this->startInterval = -1;
+					this->endInterval = -1;
+					throw ex(err.getErrorCode(), err.getErrorMsg());
+				}
+				
+			}
+
+		};
+		QVector<zaijava> Papka;
+		Papka.reserve(InputText.size() / 4);
+
+		for (int i = 0; i < listZaiv.size(); i += 4) {
+			QString name = listZaiv[i];
+			QString interval = listZaiv[i + 1];
+			QString price = listZaiv[i + 2];
+			Papka.push_back(zaijava(name, interval, price));
+			try {
+				Papka.last().convertInterval();
+			}
+			catch (const ex& err) {
+				QMessageBox::critical(dialog, " Помилка", err.getErrorMsg());
+				return;
+			}
+			if (!testName.match(name).hasMatch() || !testInterval.match(interval).hasMatch() || !testPrice.match(price).hasMatch()) {
+				QString buff;
+				if (!testName.match(name).hasMatch()) buff = "Некоректне ім'я";
+				if (!testInterval.match(interval).hasMatch()) buff = "Некоректний час оренди";
+				if (!testPrice.match(price).hasMatch()) buff = "Некоректна ціна";
+
+				QMessageBox::warning(dialog, "Попередження", "\nДанні не відповідають стандарту.\n" + buff);
+				return;
+			}
+		}
+		struct compareZaijava {
+		public: bool operator() (const zaijava &a, const zaijava &b) { return a.getEndInterval() < b.getEndInterval(); }
+		};
+		quickSort<compareZaijava> tmp;
+		tmp.sort(Papka.data(), 0, (Papka.size() - 1));
+		//Papka має відсортовані заявки по закінченню терміну оренди
+		QVector<int> dp(Papka.size(), 0);
+		//для кожної заявки шукається попередня яка закінчується не перетинаючись із поточною
+		QVector<int> prev(Papka.size(), -1);
+		for (int i = 0; i < Papka.size(); ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				if (Papka[j].getEndInterval() <= Papka[i].getStartInterval()) {
+					prev[i] = j;
+					break;
+				}
+			}
+		}
+		//заповнення таблиці dp загальним максимальним прибутком 
+		for (int i = 0; i < Papka.size(); ++i) {
+			int include = Papka[i].getPrice(); //дохід від поточної заявки
+			if (prev[i] != -1) {
+				include += dp[prev[i]]; //сума доходів з поточною та з попередньою
+			}
+			int exclude = (i > 0) ? dp[i - 1] : 0;
+			dp[i] = (include < exclude)? exclude : include; 
+		}
+		//розбір таблиці dp для виводу найприбутковіших заявок
+		MainRightOutput->insertPlainText("Прибуток: " + QString::number(dp[dp.size() - 1]) + '\n');
+		MainRightOutput->insertPlainText("Заявки які принесуть такий прибуток:\n");
+		for (int i = dp.size() - 1; i >= 0;) {
+			if (i == 0 || dp[i] != dp[i - 1]) {
+				MainRightOutput->insertPlainText(
+					Papka[i].getName() + '\n' +
+					Papka[i].getInterval() + '\n' +
+					QString::number(Papka[i].getPrice()) + "\n\n");
+				i = prev[i];
+			}
+			else --i;
+		}
 		});
 
 	TextInfoRightMain->setStyleSheet(csslabel);
 	MainInputArearight->setStyleSheet(cssEditText);
 	SaveInputData->setStyleSheet(CssButton);
 	InstructionRightMain->setStyleSheet(csslabel);
+	MainRightOutput->setStyleSheet(cssEditText);
 
 	rightLMain->addWidget(TextInfoRightMain, 0, 0, Qt::AlignTop);
 	rightLMain->addWidget(InstructionRightMain, 1, 0, Qt::AlignTop);
 	rightLMain->addWidget(MainInputArearight, 2, 0, Qt::AlignTop);
 	rightLMain->addWidget(SaveInputData, 3, 0, Qt::AlignTop);
+	rightLMain->addWidget(MainRightOutput, 4, 0, Qt::AlignTop);
 
 
 	dialog->exec();

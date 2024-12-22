@@ -97,7 +97,6 @@ void methodHuffman::fillCharCodes(node* root, unordered_map<char, vector<bool>>&
 	fillCharCodes(root->right, charCode, code);
 	code->pop_back();
 }
-
 string methodHuffman::Decoder(const string& compressedFile) {
 	fstream decodedFile;
 	fstream squeezeFile;
@@ -162,3 +161,4 @@ string methodHuffman::Decoder(const string& compressedFile) {
 	decodingTable.close();
 	return capasityInputFile;
 }
+

@@ -42,5 +42,34 @@ public:
 	void Squeeze(fstream&, const string&);
 	string Decoder(const string&);
 };
+
+template<typename Compare> class quickSort {
+	Compare compare;
+public:
+	quickSort();
+	template<typename T> void sort(T* array, const int& left, const int& right);
+};
+
+template<typename Compare> quickSort<Compare>::quickSort() {}
+template<typename Compare> template<typename T> void quickSort<Compare>::sort(T* array, const int& left, const int& right) {
+	T buffer;
+	int i = left;
+	int j = right;
+	T pivot = array[(i + j) / 2];
+	while (i <= j)
+	{
+		while (compare(array[i], pivot)) ++i;
+		while (compare(pivot, array[j])) --j;
+		if (i <= j) {
+			buffer = array[i];
+			array[i] = array[j];
+			array[j] = buffer;
+			++i;
+			--j;
+		}
+	}
+	if (j > left) sort(array, left, j);
+	if (i < right) sort(array, i, right);
+}
 #endif // !ALGORITHMS_H
 

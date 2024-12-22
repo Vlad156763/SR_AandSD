@@ -6,6 +6,9 @@
 #include "lib/Console.h"
 #include "lib/exceptions.h"
 #include "mainWIndow.h"
+
+
+
 int main(int argc, char** argv) {
 	auto NoDebug = [&]() {
 		QApplication app(argc, argv);
