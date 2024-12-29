@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <qwidget.h>
+#include <qapplication.h>
 #include <qgridlayout.h>
 #include <qpushbutton.h>
 #include <qdialog.h>
@@ -36,6 +37,7 @@ public slots:
 	void structDataPressed();
 	void spearAlgPressed();
 	void DPPressed();
+	void SmallWayInGraphPressed();
 
 };
 #endif // !MAINWINDOW_H

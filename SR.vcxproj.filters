@@ -35,9 +35,6 @@
     <ClCompile Include="lib\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\exceptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="lib\algorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

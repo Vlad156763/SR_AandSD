@@ -1,15 +1,16 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
-class ex {
+#include <exception>
+using std::exception;
+class ex : public exception {
 private:
-	int errorCode = 0;
-	const char* errorMsg = "";
+	const char* errorMsg;
 public:
-	ex(const int& ErrorCode);
-	ex(const char* ErrorMsg);
-	ex(const int& ErrorCode = -1, const char* ErrorMessage = "");
-	int getErrorCode() const;
-	const char* getErrorMsg() const;
+	ex(const char* errorMsg) { this->errorMsg = errorMsg; }
+	const char* what() const noexcept override {
+		return errorMsg;
+	}
+
 };
 #endif // !EXCEPTION_H
 

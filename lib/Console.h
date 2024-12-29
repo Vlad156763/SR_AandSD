@@ -6,15 +6,14 @@
 #include <Windows.h>
 #include "exceptions.h"
 namespace out {
-	std::string rgbT(const int&, const int&, const int&);
-	std::string rgbB(const int&, const int&, const int&);
-	std::string move(const int&, const int&);
+	std::string rgb(const int& r, const int& g, const int& b, bool for_background = false);
+	std::string move(const int& row, const int& col);
 	extern const char* reset;
 	extern const char* endl;
 	extern const char* tab;
 	int getRow();
 	int getCol();
-	
-}	
+	int windowXmax();
+}
 static CONSOLE_SCREEN_BUFFER_INFO getConsoleScreenBufferInfo();
 #endif // !CONSOLE_H

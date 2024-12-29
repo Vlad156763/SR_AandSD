@@ -9,11 +9,11 @@ ui::ui(QWidget* parent) :QWidget(parent) {
 	QPushButton* DP = new QPushButton("Динамічне програмуваня", this);
 	QPushButton* GraphAlg = new QPushButton("Обхід графів", this);
 	QPushButton* GraphAlgSmallWay = new QPushButton("Найкородший шлях графа", this);
-	connect(piramidalSort, &QPushButton::released, this, &ui::piramidalSortPressed);
-	connect(structData, &QPushButton::released, this, &ui::structDataPressed);
+	//connect(piramidalSort, &QPushButton::released, this, &ui::piramidalSortPressed);
+	//connect(structData, &QPushButton::released, this, &ui::structDataPressed);
 	connect(spearAlg, &QPushButton::released, this, &ui::spearAlgPressed);
 	connect(DP, &QPushButton::released, this, &ui::DPPressed);
-
+	connect(GraphAlg, &QPushButton::released, this, &ui::SmallWayInGraphPressed);
 
 	GraphAlgSmallWay->setFixedHeight(100);
 	piramidalSort->setFixedHeight(100);
@@ -62,17 +62,17 @@ ui::ui(QWidget* parent) :QWidget(parent) {
 	this->mainLayout->addWidget(structData, 1, 0);
 	this->mainLayout->addWidget(spearAlg, 2, 0);
 	this->mainLayout->addWidget(DP, 0, 1);
-	this->mainLayout->addWidget(GraphAlgSmallWay, 1, 1);
-	this->mainLayout->addWidget(GraphAlg, 2, 1);
+	this->mainLayout->addWidget(GraphAlg, 1, 1);
+	this->mainLayout->addWidget(GraphAlgSmallWay, 2, 1);
 } 
 void ui::piramidalSortPressed() {
-	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Пірамідальне сортування " << out::reset << out::endl;
+	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99, 1) << " Пірамідальне сортування " << out::reset << out::endl;
 }
 void ui::structDataPressed() {
-	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Структури данних " << out::reset << out::endl;
+	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99, 1) << " Структури данних " << out::reset << out::endl;
 }
 void ui::spearAlgPressed() {
-	cout << out::rgbT(0,0,0) << out::rgbB(23,103,99) << " Жадібні алгоритми " << out::reset << out::endl;
+	cout << out::rgb(0,0,0) << out::rgb(23,103,99, 1) << " Жадібні алгоритми " << out::reset << out::endl;
 	QDialog* dialog = new QDialog(this);
 	QGridLayout* dialogLayout = new QGridLayout(dialog);
 	dialog->setWindowTitle("Жадібні алгоритми");
@@ -364,7 +364,7 @@ void ui::spearAlgPressed() {
 	dialog->exec();
 }
 void ui::DPPressed() {
-	cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Динамічне програмування " << out::reset << out::endl;
+	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99, 1) << " Динамічне програмування " << out::reset << out::endl;
 
 	cout
 		<< "Задача 1-Г. \nРядок складається з символів української абетки.У"
@@ -508,8 +508,8 @@ void ui::DPPressed() {
 				for (QVector<int> row : dp) {
 					for (int cell : row) {
 						cout <<
-							(cell == 0? out::rgbT(0, 0, 0) + out::rgbB(255, 255, 255)
-								: (cell != 1 && cell != 0)? out::rgbT(0, 255, 0)
+							(cell == 0? out::rgb(0, 0, 0) + out::rgb(255, 255, 255, 1)
+								: (cell != 1 && cell != 0)? out::rgb(0, 255, 0)
 								: out::reset) << cell << out::reset << ' ';
 					}
 					cout << out::endl;
@@ -520,7 +520,7 @@ void ui::DPPressed() {
 			for (int i = 0; i < text.size(); i++) {
 				dp[i][i] = 1;
 			}
-			cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Логи для перевірки завдання Г " << out::reset << out::endl;
+			cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99, 1) << " Логи для перевірки завдання Г " << out::reset << out::endl;
 			cout << "Все що буде виведено далі є таблицею яка потрібна для визначення найдовшого паліндрому"
 				<< " шляхом проходження від: [0][n - 1] де n це довжина введених данних, до max([i + 1][j], [i][j-1]) і якщо символ у підрядку"
 				<< " [i] == [j] то даний символ записується у вихідний паліндром." << out::endl;
@@ -618,31 +618,31 @@ rightMain
 				try {
 					formatTime.push_back(Interval[0]);
 					formatTime.push_back(Interval[1]);
-					if (formatTime.toInt() > 23) { throw ex(1, "Невірно введені години"); }
+					if (formatTime.toInt() > 23) { throw ex("Невірно введені години"); }
 					formatTime.push_back(Interval[3]);
 					formatTime.push_back(Interval[4]);
 					buffer.push_back(Interval[3]);
 					buffer.push_back(Interval[4]);
-					if (buffer.toInt() > 60) { throw ex(2, "Невірно введені хвилини"); }
+					if (buffer.toInt() > 60) { throw ex("Невірно введені хвилини"); }
 					this->startInterval = formatTime.toInt();
 					formatTime.clear();
 					buffer.clear();
 
 					formatTime.push_back(Interval[8]);
 					formatTime.push_back(Interval[9]);
-					if (formatTime.toInt() > 23) { throw ex(1, "Невірно введені години"); }
+					if (formatTime.toInt() > 23) { throw ex("Невірно введені години"); }
 					formatTime.push_back(Interval[11]);
 					formatTime.push_back(Interval[12]);
 					buffer.push_back(Interval[11]);
 					buffer.push_back(Interval[12]);
-					if (buffer.toInt() > 60) { throw ex(2, "Невірно введені хвилини"); }
+					if (buffer.toInt() > 60) { throw ex("Невірно введені хвилини"); }
 					this->endInterval = formatTime.toInt();
-					if (this->startInterval >= this->endInterval) throw ex(3, "Невірно вказаний інтервал");
+					if (this->startInterval >= this->endInterval) throw ex("Невірно вказаний інтервал");
 				}
 				catch (const ex& err) {
 					this->startInterval = -1;
 					this->endInterval = -1;
-					throw ex(err.getErrorCode(), err.getErrorMsg());
+					throw ex(err.what());
 				}
 				
 			}
@@ -660,7 +660,7 @@ rightMain
 				Papka.last().convertInterval();
 			}
 			catch (const ex& err) {
-				QMessageBox::critical(dialog, " Помилка", err.getErrorMsg());
+				QMessageBox::critical(dialog, " Помилка", err.what());
 				return;
 			}
 			if (!testName.match(name).hasMatch() || !testInterval.match(interval).hasMatch() || !testPrice.match(price).hasMatch()) {
@@ -690,7 +690,7 @@ rightMain
 				}
 			}
 		}
-		cout << out::rgbT(0, 0, 0) << out::rgbB(23, 103, 99) << " Логи для перевірки завдання Б " << out::reset << out::endl;
+		cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99,1) << " Логи для перевірки завдання Б " << out::reset << out::endl;
 		cout << "Все що буде виведенео далі є таблицею найприбутковіших значень для і-ї заявки" << out::endl;
 		//заповнення таблиці dp загальним максимальним прибутком 
 		for (int i = 0; i < Papka.size(); ++i) {
@@ -700,9 +700,9 @@ rightMain
 			}
 			int exclude = (i > 0) ? dp[i - 1] : 0;
 			dp[i] = (include < exclude) ? exclude : include;
-			cout << i + 1 << "." << out::rgbB(100, 100, 200) << " " << out::reset;
+			cout << i + 1 << "." << out::rgb(100, 100, 200,1) << " " << out::reset;
 			for (int j = 0; j < dp.size(); j++) {
-				cout << ((dp[j] == 0) ? out::rgbB(255, 255, 255) + out::rgbT(0, 0, 0) : out::rgbT(0, 255, 0)) << std::setw(8) <<dp[j] << out::reset + out::rgbB(100,100,200) << " " << out::reset;
+				cout << ((dp[j] == 0) ? out::rgb (255, 255, 255,1) + out::rgb(0, 0, 0,1) : out::rgb(0, 255, 0)) << std::setw(8) <<dp[j] << out::reset + out::rgb(100,100,200,1) << " " << out::reset;
 			}
 			cout << out::endl;
 		}
@@ -733,6 +733,35 @@ rightMain
 	rightLMain->addWidget(SaveInputData, 3, 0, Qt::AlignTop);
 	rightLMain->addWidget(MainRightOutput, 4, 0, Qt::AlignTop);
 
+
+	dialog->exec();
+}
+void ui::SmallWayInGraphPressed() {
+	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99,1) << " Обхід графа " << out::reset << out::endl;
+	cout << "5.3.2 Розробити програмне забезпечення, в якому реалізується"
+		<< " алгоритм обходу графу на основі пошуку в глибину.Передбачити, що"
+		<< " граф може бути як орієнтований, так і неорієнтований.В процесі"
+		<< " пошуку має бути сформовано ліс пошуку в глибину.Для реалізації"
+		<< " має використовуватися стек.Програмне забезпечення має бути"
+		<< " побудовано на основі відповідного класу, який повинен дозволяти"
+		<< " визначати граф, виконувати пошук в глибину, виводити побудований"
+		<< " ліс пошуку в глибину, виводити результат обходу тощо." << out::endl
+		<< " 5.3.3 Розробити програмне забезпечення, в якому реалізується"
+		<< " алгоритм обходу графу на основі пошуку в ширину.Передбачити, що"
+		<< " граф може бути як орієнтований, так і неорієнтований.В процесі"
+		<< " пошуку має бути сформовано дерево пошуку в ширину.Для реалізації"
+		<< " має використовуватися черга.Програмне забезпечення має бути"
+		<< " побудовано на основі відповідного класу, який повинен дозволяти"
+		<< " визначати граф, виконувати пошук в ширину, виводити побудоване"
+		<< " дерево пошуку в ширину, виводити результат обходу тощо." << out::endl;
+
+	QDialog* dialog = new QDialog(this);
+	QGridLayout* dialogLayout = new QGridLayout(dialog);
+	dialog->setWindowTitle("Найкоротший шлях у графах");
+	dialog->setFixedSize(800, 700);
+	dialog->setStyleSheet(
+		"#QDialog { background-color: rgb(30,30,30); }"
+	);
 
 	dialog->exec();
 }

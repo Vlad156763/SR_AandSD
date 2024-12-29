@@ -161,4 +161,3 @@ string methodHuffman::Decoder(const string& compressedFile) {
 	decodingTable.close();
 	return capasityInputFile;
 }
-

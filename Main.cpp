@@ -10,16 +10,23 @@
 
 
 int main(int argc, char** argv) {
+	auto ProgramIsEnd = []() {
+		std::string tmp = "Програма завершила роботу. Перезапуск...";
+		int sizeTmp = 40;
+		std::cout << out::move(out::getRow(), (out::windowXmax() - sizeTmp)) << out::rgb(0, 255, 0) << tmp << out::reset << out::endl;
+		};
 	auto NoDebug = [&]() {
 		QApplication app(argc, argv);
 		ui mainWindow;
 		mainWindow.show();
 		app.exec();
 		app.exit();
+		ProgramIsEnd();
 	};
 	auto YesDebug = [&]() {
 		__test t;
 		t.show();
+		ProgramIsEnd();
 	};
 	do {
 		std::string debug;

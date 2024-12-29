@@ -103,7 +103,6 @@
   <ItemGroup>
     <ClCompile Include="lib\algorithms.cpp" />
     <ClCompile Include="lib\Console.cpp" />
-    <ClCompile Include="lib\exceptions.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="mainWIndow.cpp" />
     <ClCompile Include="test.cpp" />
