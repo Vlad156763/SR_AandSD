@@ -1,6 +1,86 @@
 #include "mainWIndow.h"
+namespace {
+	QString cssWidget =
+		"QWidget {"
+		"	background-color: rgb(90,90,90);"
+		"	border-radius: 5px;"
+		"}";
+	QString cssButtonNavigate =
+		"QPushButton {"
+		"   background-color: transparent;"
+		"   border: none;"
+		"   border-radius: 5px;"
+		"}"
+		"QPushButton:focus {"
+		"   outline: 0px;"
+		"}"
+		"QPushButton:hover {"
+		"   background-color: #828282;"
+		"}"
+		"QPushButton:pressed {"
+		"   background-color: #a0a0a0;"
+		"}";
+	QString CssButton =
+		"QPushButton {"
+		"	background-color: rgb(70,70,70);"
+		"	border-radius: 5px;"
+		"	color: #ffffff;"
+		"	font-weight: bold;"
+		"	border: none;"
+		"	padding: 10px;"
+		"}"
+		"QPushButton:focus {"
+		"   outline: 0px;"
+		"}"
+		"QPushButton:hover {"
+		"	background-color: rgb(120, 120,120);"
+		"}";
+	QString cssTitle =
+		"QLabel {"
+		"   background-color: rgb(70,70,70);"
+		"	font-weight: bold;"
+		"	font-size: 16px;"
+		"}";
+	QString csslabel = "QLabel { font-weight: bold;}";
+	QString cssEditText =
+		"QTextEdit {"
+		"   background-color: rgb(70,70,70);"
+		"	color: #ffffff;"
+		"	border-radius: 5px;"
+		"	padding: 5px;"
+		"}"
+		"QTextEdit:focus {"
+		"	outline:none;"
+		"}"
+		"QScrollBar::handle:vertical {"
+		"    background: rgb(63,143,139);"
+		"    min-height: 10px;"
+		"    border-radius: 4px;"
+		"    margin: 2px;"
+		"}"
+		"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+		"    height: 0px;"
+		"}"
+		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
+		"    background: none;" //ось це прибирає прозорість блоку, де знаходиться повзунок 
+		"}"
+		;
+	QString cssEditLine =
+		"QLineEdit {"
+		"   background-color: rgb(70,70,70);"
+		"	color: #ffffff;"
+		"	border-radius: 5px;"
+		"	padding: 5px;"
+		"}"
+		"QLineEdit:focus {"
+		"	outline:none;"
+		"}"
+		;
+	QFont FontForText("Courier");
+}
 ui::ui(QWidget* parent) :QWidget(parent) {
 	this->setWindowTitle("Самостійна робота");
+	this->setWindowIcon(QIcon("icons/title.png"));
 	this->setObjectName("this");
 	this->mainLayout = new QGridLayout(this);
 	QPushButton* piramidalSort = new QPushButton("Пірамідальне сортування", this); 
@@ -65,6 +145,9 @@ ui::ui(QWidget* parent) :QWidget(parent) {
 	this->mainLayout->addWidget(GraphAlg, 1, 1);
 	this->mainLayout->addWidget(GraphAlgSmallWay, 2, 1);
 } 
+void ui::setAtributes(const QVector<QString>& atr) {
+	this->atributes = atr;
+}
 void ui::piramidalSortPressed() {
 	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99, 1) << " Пірамідальне сортування " << out::reset << out::endl;
 }
@@ -109,66 +192,10 @@ void ui::spearAlgPressed() {
 	QTextEdit* RightTextIn = new QTextEdit(mainRightSide);
 	QPushButton* squeezeInputText = new QPushButton("Записати та стиснути", mainRightSide);
 	QTextEdit* RightTextOut = new QTextEdit(mainRightSide);
-	QString cssEditLine =
-		"QLineEdit {"
-		"   background-color: rgb(70,70,70);"
-		"	color: #ffffff;"
-		"	border-radius: 5px;"
-		"	padding: 5px;"
-		"}"
-		"QLineEdit:focus {"
-		"	outline:none;"
-		"}"
-		;
-	QString cssEditText =
-		"QTextEdit {"
-		"   background-color: rgb(70,70,70);"
-		"	color: #ffffff;"
-		"	border-radius: 5px;"
-		"	padding: 5px;"
-		"}"
-		"QTextEdit:focus {"
-		"	outline:none;"
-		"}"
-		"QScrollBar::handle:vertical {"
-		"    background: rgb(63,143,139);"
-		"    min-height: 10px;"
-		"    border-radius: 4px;"
-		"    margin: 2px;"
-		"}"
-		"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
-		"    height: 0px;"
-		"}"
-		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
-		"    background: none;" //ось це прибирає прозорість блоку, де знаходиться повзунок 
-		"}"
-		;
-	QString csslabel = "QLabel { font-weight: bold;}";
-	QString cssTitle =
-		"QLabel {"
-		"   background-color: rgb(70,70,70);"
-		"	font-weight: bold;"
-		"	font-size: 16px;"
-		"}";
 	QString CSS =
 		"QWidget {"
 		"	background-color: rgb(90,90,90);"
 		"	border-radius: 5px;"
-		"}";
-	QString CssButton =
-		"QPushButton {"
-		"	background-color: rgb(70,70,70);"
-		"	border-radius: 5px;"
-		"	color: #ffffff;"
-		"	font-weight: bold;"
-		"	border: none;"
-		"	padding: 10px;"
-		"}"
-		"QPushButton:focus {"
-		"   outline: 0px;"
-		"}"
-		"QPushButton:hover {"
-		"	background-color: rgb(120, 120,120);"
 		"}";
 	leftIndividualTask->setStyleSheet(CSS);
 	RightHapman->setStyleSheet(CSS);
@@ -391,69 +418,7 @@ void ui::DPPressed() {
 	);
 	QWidget* left = new QWidget(dialog); QGridLayout* leftL = new QGridLayout(left);
 	QWidget* right= new QWidget(dialog); QGridLayout* rightL = new QGridLayout(right);
-	QString cssWidget =
-		"QWidget {"
-		"	background-color: rgb(90,90,90);"
-		"	border-radius: 5px;"
-		"}";
-	QString csstitlte = 
-		"QLabel {"
-		"   background-color: rgb(70,70,70);"
-		"	font-weight: bold;"
-		"	font-size: 16px;"
-		"	padding: 10px;"
-		"}"
-		;
-	QString cssEditLine =
-		"QLineEdit {"
-		"   background-color: rgb(70,70,70);"
-		"	color: #ffffff;"
-		"	border-radius: 5px;"
-		"	padding: 5px;"
-		"}"
-		"QLineEdit:focus {"
-		"	outline:none;"
-		"}"
-		;
-	QString CssButton =
-		"QPushButton {"
-		"	background-color: rgb(70,70,70);"
-		"	border-radius: 5px;"
-		"	color: #ffffff;"
-		"	font-weight: bold;"
-		"	border: none;"
-		"	padding: 10px;"
-		"}"
-		"QPushButton:focus {"
-		"   outline: 0px;"
-		"}"
-		"QPushButton:hover {"
-		"	background-color: rgb(120, 120,120);"
-		"}";
-	QString cssEditText =
-		"QTextEdit {"
-		"   background-color: rgb(70,70,70);"
-		"	color: #ffffff;"
-		"	border-radius: 5px;"
-		"	padding: 5px;"
-		"}"
-		"QTextEdit:focus {"
-		"	outline:none;"
-		"}"
-		"QScrollBar::handle:vertical {"
-		"    background: rgb(63,143,139);"
-		"    min-height: 10px;"
-		"    border-radius: 4px;"
-		"    margin: 2px;"
-		"}"
-		"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
-		"    height: 0px;"
-		"}"
-		"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
-		"    background: none;" //ось це прибирає прозорість блоку, де знаходиться повзунок 
-		"}"
-		;
-	QString csslabel = "QLabel { font-weight: bold;}";
+	
 	QLabel* t1 = new QLabel("Г",left); 
 	QLabel* t2 = new QLabel("Б", right);
 
@@ -461,8 +426,10 @@ void ui::DPPressed() {
 	QWidget* rightMain = new QWidget(dialog); QGridLayout* rightLMain = new QGridLayout(rightMain);
 	t1->setAlignment(Qt::AlignCenter);
 	t2->setAlignment(Qt::AlignCenter);
-	t1->setStyleSheet(csstitlte);
-	t2->setStyleSheet(csstitlte);
+	t1->setFixedHeight(50);
+	t2->setFixedHeight(50);
+	t1->setStyleSheet(cssTitle);
+	t2->setStyleSheet(cssTitle);
 	left->setStyleSheet(cssWidget);
 	right->setStyleSheet(cssWidget);
 	dialogLayout->setColumnStretch(0, 1);
@@ -490,6 +457,9 @@ void ui::DPPressed() {
 	leftLMain->addWidget(GetTextButton, 2, 0, Qt::AlignTop);
 	leftLMain->addWidget(Result, 3, 0, Qt::AlignTop);
 	Result->setStyleSheet(cssEditText);
+	if (!this->atributes.isEmpty() && this->atributes[0] == "--st") {
+		InputText->setText("кабачок");
+	}
 	connect(GetTextButton, &QPushButton::released, [InputText, Result, dialog]() {
 		QString text = InputText->text();
 		QString resultText;
@@ -577,9 +547,24 @@ rightMain
 		"20000\n"
 		"\n"
 		"Анна Василівна\n"
-		"13:00 - 14 : 30\n"
+		"13:00 - 14:30\n"
 		"50000\n"
 	);
+	if (!this->atributes.isEmpty() && this->atributes[0] == "--st") {
+		MainInputArearight->setText(
+			"Покупець Ігор\n"
+			"12:00 - 13:00\n"
+			"100\n"
+			"\n"
+			"Покупець Михайло\n"
+			"13:00 - 14:00\n"
+			"200\n"
+			"\n"
+			"Покупець Лариса\n"
+			"12:00 - 14:00\n"
+			"250\n"
+		);
+	}
 	QPushButton* SaveInputData = new QPushButton("Визначити найприбутковіші заявки", rightMain);
 
 	connect(SaveInputData, &QPushButton::released, [MainInputArearight, MainRightOutput, dialog]() {
@@ -702,7 +687,7 @@ rightMain
 			dp[i] = (include < exclude) ? exclude : include;
 			cout << i + 1 << "." << out::rgb(100, 100, 200,1) << " " << out::reset;
 			for (int j = 0; j < dp.size(); j++) {
-				cout << ((dp[j] == 0) ? out::rgb (255, 255, 255,1) + out::rgb(0, 0, 0,1) : out::rgb(0, 255, 0)) << std::setw(8) <<dp[j] << out::reset + out::rgb(100,100,200,1) << " " << out::reset;
+				cout << ((dp[j] == 0) ? out::rgb (60, 60, 60,1) + out::rgb(0, 0, 0) : out::rgb(0, 255, 0)) << std::setw(8) <<dp[j] << out::reset + out::rgb(100,100,200,1) << " " << out::reset;
 			}
 			cout << out::endl;
 		}
@@ -737,31 +722,579 @@ rightMain
 	dialog->exec();
 }
 void ui::SmallWayInGraphPressed() {
-	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99,1) << " Обхід графа " << out::reset << out::endl;
-	cout << "5.3.2 Розробити програмне забезпечення, в якому реалізується"
-		<< " алгоритм обходу графу на основі пошуку в глибину.Передбачити, що"
-		<< " граф може бути як орієнтований, так і неорієнтований.В процесі"
+	cout << out::rgb(0, 0, 0) << out::rgb(23, 103, 99,1) << " Обхід графів " << out::reset << out::endl;
+	cout << "5.3.2\nАлгоритм обходу графу на основі пошуку в глибину, граф може бути як орієнтований, так і неорієнтований.В процесі"
 		<< " пошуку має бути сформовано ліс пошуку в глибину.Для реалізації"
-		<< " має використовуватися стек.Програмне забезпечення має бути"
-		<< " побудовано на основі відповідного класу, який повинен дозволяти"
-		<< " визначати граф, виконувати пошук в глибину, виводити побудований"
-		<< " ліс пошуку в глибину, виводити результат обходу тощо." << out::endl
-		<< " 5.3.3 Розробити програмне забезпечення, в якому реалізується"
-		<< " алгоритм обходу графу на основі пошуку в ширину.Передбачити, що"
-		<< " граф може бути як орієнтований, так і неорієнтований.В процесі"
+		<< " має використовуватися стек." << out::endl
+		<< "5.3.3\nАлгоритм обходу графу на основі пошуку в ширину, граф може бути як орієнтований, так і неорієнтований.В процесі"
 		<< " пошуку має бути сформовано дерево пошуку в ширину.Для реалізації"
-		<< " має використовуватися черга.Програмне забезпечення має бути"
-		<< " побудовано на основі відповідного класу, який повинен дозволяти"
-		<< " визначати граф, виконувати пошук в ширину, виводити побудоване"
-		<< " дерево пошуку в ширину, виводити результат обходу тощо." << out::endl;
+		<< " має використовуватися черга." << out::endl
+		<< "Задача 1: Г. \nЗнайти мінімальний шлях між двома заданими вершинами у"
+		<< " графі.Визначити довжину такого шляху та всі вершини, через які він"
+		<< " проходить." << out::endl
+		<< "Задача 2: Г.\nВиконати класифікацію ребер графа на ребра дерева, зворотні"
+		<< " ребра, прямі ребра та перехресні ребра.Визначити, чи є заданий"
+		<< " орієнтований граф ациклічним." << out::endl
+		<< "Задача 3: Г. \nВизначити порядок, за яким мають бути прочитані"
+		<< " дисципліни під час навчання однієї з академічних груп.Моделювання"
+		<< " виконати за допомогою графа, вершини якого представляють"
+		<< " дисципліни, а орієнтовані ребра позначають вимоги до дисциплін"
+		<< " (наприклад, курс C має бути прочитаний перед курсами A і B, а курс"
+		<< " D – після курсу А тощо)." << out::endl;
 
 	QDialog* dialog = new QDialog(this);
 	QGridLayout* dialogLayout = new QGridLayout(dialog);
-	dialog->setWindowTitle("Найкоротший шлях у графах");
+	dialog->setWindowTitle("Обхід графів");
 	dialog->setFixedSize(800, 700);
 	dialog->setStyleSheet(
-		"#QDialog { background-color: rgb(30,30,30); }"
+		"QDialog { background-color: rgb(30,30,30); }"
 	);
+	
+	QWidget* LeftWidgetPage_1_DFS_BFS = new QWidget(dialog); QGridLayout* LeftWidgetPage_1_DFS_BFSLayout = new QGridLayout(LeftWidgetPage_1_DFS_BFS);
+	QWidget* RightWidgetPage_1_Task1 = new QWidget(dialog); QGridLayout* RightWidgetPage_1_Task1Layout = new QGridLayout(RightWidgetPage_1_Task1);
+	QWidget* BottomPagination = new QWidget(dialog); QGridLayout* BottomPaginationLayout = new QGridLayout(BottomPagination);
+	QWidget* LeftWidgetPage_2_Task2 = new QWidget(dialog); QGridLayout* LeftWidgetPage_2_Task2Layout = new QGridLayout(LeftWidgetPage_2_Task2);
+	QWidget* RightWidgetPage_2_Task3 = new QWidget(dialog); QGridLayout* RightWidgetPage_2_Task3Layout = new QGridLayout(RightWidgetPage_2_Task3);
+
+	QPushButton* buttonForLeft = new QPushButton(BottomPagination);
+	QPushButton* buttonForRight = new QPushButton(BottomPagination);
+	
+	auto LeftWidgetDFS_BFS = [this, &LeftWidgetPage_1_DFS_BFS, &LeftWidgetPage_1_DFS_BFSLayout, &dialog]() {
+		QLabel* title = new QLabel("BFS/DFS", LeftWidgetPage_1_DFS_BFS);
+		QWidget* mainLeft = new QWidget(LeftWidgetPage_1_DFS_BFS); QGridLayout* mainLeftLayout = new QGridLayout(mainLeft);
+		QLabel* textStartV = new QLabel("Початкова вершина:", mainLeft);
+		QLineEdit* startVertex = new QLineEdit(mainLeft);
+		QTextEdit* inputArea = new QTextEdit(mainLeft);
+		QPushButton* buttonDFS = new QPushButton("DFS", mainLeft);
+		QPushButton* buttonBFS = new QPushButton("BFS", mainLeft);
+		QTextEdit* resultArea = new QTextEdit(mainLeft);
+
+		title->setAlignment(Qt::AlignCenter);
+		title->setStyleSheet(cssTitle);
+		title->setFixedHeight(50);
+		LeftWidgetPage_1_DFS_BFSLayout->setAlignment(Qt::AlignTop);
+		inputArea->setFont(QFont("Courier"));
+		LeftWidgetPage_1_DFS_BFS->setStyleSheet(cssWidget);
+		inputArea->setStyleSheet(cssEditText);
+		buttonDFS->setStyleSheet(CssButton);
+		buttonBFS->setStyleSheet(CssButton);
+		mainLeftLayout->setColumnStretch(0, 1);
+		mainLeftLayout->setColumnStretch(1, 1);
+		resultArea->setFont(QFont("Courier"));
+		resultArea->setStyleSheet(cssEditText);
+		resultArea->setDisabled(true);
+		startVertex->setStyleSheet(cssEditLine);
+		textStartV->setStyleSheet(csslabel);
+		textStartV->setAlignment(Qt::AlignCenter);
+		inputArea->setPlaceholderText(
+			"V1 V2 1\n"
+			"V2 V3 0\n"
+			"V3 V1 1\n"
+		);
+		startVertex->setPlaceholderText("V1");
+		if (!atributes.isEmpty() && atributes[0] == "--st") {
+			startVertex->setText("A1");
+			inputArea->setText(
+				"A1 A2 0\n"
+				"A1 A3 0\n"
+				"A2 At 0\n"
+				"A3 A4 0\n"
+				"At Ak 0\n"
+				"A4 A6 1\n"
+				"Ak A11 0\n"
+				"A6 A5 1\n"
+				"A5 A11 0\n"
+				"A5 A22 0\n"
+				"B1 B2 1\n"
+				"C1 C2 0"
+			);
+		}
+		startVertex->setFont(FontForText);
+
+		mainLeftLayout->addWidget(textStartV, 0, 0, 1, 1, Qt::AlignVCenter);
+		mainLeftLayout->addWidget(startVertex, 0, 1, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(inputArea, 1, 0, 1, 2, Qt::AlignTop);
+		mainLeftLayout->addWidget(buttonDFS, 2, 0, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(buttonBFS, 2, 1, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(resultArea, 3, 0, 1, 2, Qt::AlignTop);
+		LeftWidgetPage_1_DFS_BFSLayout->addWidget(title, 0, 0, Qt::AlignTop);
+		LeftWidgetPage_1_DFS_BFSLayout->addWidget(mainLeft, 1, 0, Qt::AlignTop);
+
+		auto DFS_BFSPressed = [resultArea, startVertex, inputArea, &dialog](bool is_DFS) {
+			if (resultArea->toPlainText().size() != 0) resultArea->clear();
+			if (startVertex->text().isEmpty() || inputArea->toPlainText().isEmpty()) {
+				QMessageBox::warning(dialog, "Попередження", "\nНемає данних!");
+				return;
+			}
+			QString startV;
+			QStringList input;
+			struct V_V_d {
+				QString From;
+				QString To;
+				int is_directed;
+				V_V_d(const QString& From, const QString& To, int is_directed) : From(From), To(To), is_directed(is_directed) {}
+			};
+			QVector<V_V_d> buffer;
+			try {
+				startV = startVertex->text();
+				input = inputArea->toPlainText().split("\n");
+				for (int i = 0; i < input.size(); i++) {
+					QStringList tmp = input[i].split(QRegularExpression("\\s+"));
+					if (tmp.size() < 3) throw int(1);
+					buffer.push_back(V_V_d(tmp[0], tmp[1], tmp[2].toInt()));
+				}
+			}
+			catch (const int& ex) {
+				if (ex == 1) {
+					QMessageBox::critical(dialog, "Помилка", "\nВведено данні, які не можна обробити!");
+				}
+				return;
+			}
+			no_weighted_graph<QString> graph;
+			for (int i = 0; i < buffer.size(); i++) {
+				graph.add(buffer[i].From, buffer[i].To, buffer[i].is_directed);
+			}
+			
+			if (!graph.isVertex(startV)) {
+				resultArea->setTextColor(QColor(255, 0, 0));
+				resultArea->setText("Заданої вершини немає");
+				return;
+			}
+			forest<QString> f = (is_DFS) ? graph.DFS(startV) : graph.BFS(startV);
+			for (int i = 0; i < f.size(); i++) {
+				vector<vector<QString>> r = f.getTreeWalkDFS(i);
+				unordered_set<QString> visited;
+				resultArea->insertPlainText(QString::number(i) + " : Підграф\n");
+				for (int j = 0; j < r.size(); j++) {
+					resultArea->insertPlainText(out::tab + QString::number(j) + ": ");
+					for (int k = 0; k < r[j].size(); k++) {
+						if (visited.find(r[j][k]) == visited.end()) {
+							resultArea->setTextColor(QColor(0, 255, 0));
+						}
+						else resultArea->setTextColor(QColor(255, 255, 255));
+						resultArea->insertPlainText(r[j][k] + " ");
+						visited.insert(r[j][k]);
+					}
+					resultArea->setTextColor(QColor(255, 255, 255));
+					resultArea->insertPlainText("\n");
+				}
+			}
+			};
+		connect(buttonDFS, &QPushButton::released, [DFS_BFSPressed]() {DFS_BFSPressed(true); });
+		connect(buttonBFS, &QPushButton::released, [DFS_BFSPressed]() {DFS_BFSPressed(false); });
+
+	};
+	auto RightWidgetTask_1 = [this, &RightWidgetPage_1_Task1, &RightWidgetPage_1_Task1Layout, &dialog]() {
+		QLabel* title = new QLabel("Задача 1.Г", RightWidgetPage_1_Task1);
+		QWidget* mainLeft = new QWidget(RightWidgetPage_1_Task1); QGridLayout* mainLeftLayout = new QGridLayout(mainLeft);
+		QLabel* startVText = new QLabel("Початкова вершина:", mainLeft);
+		QLineEdit* startVInput = new QLineEdit(mainLeft);
+		QLabel* endVText = new QLabel("Кінцева вершина:", mainLeft);
+		QLineEdit* endVinput = new QLineEdit(mainLeft);
+		
+		QTextEdit* inputGraph = new QTextEdit(mainLeft);
+		QPushButton* resultButton = new QPushButton("Знайти шлях", mainLeft);
+		QTextEdit* resultArea = new QTextEdit(mainLeft);
+		 
+		title->setAlignment(Qt::AlignCenter);
+		title->setStyleSheet(cssTitle);
+		title->setFixedHeight(50);
+		RightWidgetPage_1_Task1->setStyleSheet(cssWidget);
+		startVText->setStyleSheet(csslabel);
+		startVText->setAlignment(Qt::AlignCenter);
+		mainLeftLayout->setColumnStretch(0, 1);
+		mainLeftLayout->setColumnStretch(1, 1);
+		startVInput->setStyleSheet(cssEditLine);
+		RightWidgetPage_1_Task1Layout->setAlignment(Qt::AlignTop);
+		endVinput->setStyleSheet(cssEditLine);
+		endVText->setStyleSheet(csslabel);
+		endVText->setAlignment(Qt::AlignCenter);
+		inputGraph->setStyleSheet(cssEditText);
+		resultArea->setStyleSheet(cssEditText);
+		resultButton->setStyleSheet(CssButton);
+		endVinput->setFont(FontForText);
+		startVInput->setFont(FontForText);
+		inputGraph->setFont(FontForText);
+		resultArea->setFont(FontForText);
+		if (!atributes.isEmpty() && atributes[0] == "--st") {
+			endVinput->setText("A6");
+			startVInput->setText("A1");
+			inputGraph->setText(
+				"A1 A2 0\n"
+				"A1 A3 0\n"
+				"A2 At 0\n"
+				"A3 A4 0\n"
+				"At Ak 0\n"
+				"A4 A6 1\n"
+				"Ak A11 0\n"
+				"A6 A5 1\n"
+				"A5 A11 0\n"
+				"A5 A22 0\n"
+				"B1 B2 1\n"
+				"C1 C2 0"
+			);
+		}
+		resultArea->setEnabled(false);
+		startVInput->setPlaceholderText("V1");
+		endVinput->setPlaceholderText("V3");
+		inputGraph->setPlaceholderText(
+			"V1 V2 1\n"
+			"V2 V3 0\n"
+			"V3 V1 1\n"
+		);
+
+		mainLeftLayout->addWidget(startVText, 0, 0, 1, 1, Qt::AlignVCenter);
+		mainLeftLayout->addWidget(startVInput, 0, 1, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(endVText, 1, 0, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(endVinput, 1, 1, 1, 1, Qt::AlignTop);
+		mainLeftLayout->addWidget(inputGraph, 2, 0, 1, 2, Qt::AlignTop);
+		mainLeftLayout->addWidget(resultButton, 3, 0, 1, 2, Qt::AlignTop);
+		mainLeftLayout->addWidget(resultArea, 4, 0, 1, 2, Qt::AlignTop);
+		RightWidgetPage_1_Task1Layout->addWidget(title, 0, 0, Qt::AlignTop);
+		RightWidgetPage_1_Task1Layout->addWidget(mainLeft, 1, 0, Qt::AlignTop);
+
+		connect(resultButton, &QPushButton::released, [resultArea, startVInput, inputGraph, endVinput, &dialog]() {
+			if (resultArea->toPlainText().size() != 0) resultArea->clear();
+
+			if (startVInput->text().isEmpty() || inputGraph->toPlainText().isEmpty() || endVinput->text().isEmpty()) {
+				QMessageBox::warning(dialog, "Попередження", "\nНемає данних!");
+				return;
+			}
+			QString startV;
+			QString endV;
+			QStringList input;
+			struct V_V_d {
+				QString From;
+				QString To;
+				int is_directed;
+				V_V_d(const QString& From, const QString& To, int is_directed) : From(From), To(To), is_directed(is_directed) {}
+			};
+			QVector<V_V_d> buffer;
+			try {
+				startV = startVInput->text();
+				endV = endVinput->text();
+				input = inputGraph->toPlainText().split("\n");
+				for (int i = 0; i < input.size(); i++) {
+					QStringList tmp = input[i].split(QRegularExpression("\\s+"));
+					if (tmp.size() < 3) throw int(1);
+					buffer.push_back(V_V_d(tmp[0], tmp[1], tmp[2].toInt()));
+				}
+			}
+			catch (const int& ex) {
+				if (ex == 1) {
+					QMessageBox::critical(dialog, "Помилка", "\nВведено данні, які не можна обробити!");
+				}
+				return;
+			}
+			no_weighted_graph<QString> graph;
+			for (int i = 0; i < buffer.size(); i++) {
+				graph.add(buffer[i].From, buffer[i].To, buffer[i].is_directed);
+			}
+			if (!graph.isVertex(startV)) {
+				resultArea->setTextColor(QColor(255, 0, 0));
+				resultArea->setText("Заданої вершини немає");
+				resultArea->setTextColor(QColor(255, 255, 255));
+
+				return;
+			}
+			forest<QString> f = graph.DFS(startV);
+			vector<vector<QString>> r = f.getTreeWalkDFS(0);
+			bool PathIsFind = false;
+			for (int iteratorForPaths = 0; iteratorForPaths < r.size() && !PathIsFind; iteratorForPaths++) {
+				for (int itForV = 0; itForV < r[iteratorForPaths].size() && !PathIsFind; itForV++) {
+					if (r[iteratorForPaths][itForV] == endV) {
+						//виводжу шлях і виходжу з циклів
+						PathIsFind = true;
+						for (int i = 0; i <= itForV; i++) {
+							if (r[iteratorForPaths][i] == startV || r[iteratorForPaths][i] == endV) {
+								resultArea->setTextColor(QColor(0, 255, 0));
+							}
+							else resultArea->setTextColor(QColor(255, 255, 255));
+							resultArea->insertPlainText(r[iteratorForPaths][i] + " ");
+						}
+					}
+				}
+			}
+			if (!PathIsFind) {
+				resultArea->setTextColor(QColor(255, 0, 0));
+				resultArea->insertPlainText("Немає шляху!");
+			}
+			});
+	};
+	auto LeftWidgetTask_2 = [&LeftWidgetPage_2_Task2, &LeftWidgetPage_2_Task2Layout, this, &dialog]() {
+		QLabel* title = new QLabel("Задача 2.Г", LeftWidgetPage_2_Task2);
+		QWidget* main = new QWidget(LeftWidgetPage_2_Task2); QGridLayout* mainLayout = new QGridLayout(main);
+		QLabel* startV = new QLabel("Початкова вершина:", main);
+		QLineEdit* inputStartV = new QLineEdit(main);
+		QTextEdit* inputGraf = new QTextEdit(main);
+		QPushButton* resultButton = new QPushButton("Результат", main);
+		QTextEdit* resultArea = new QTextEdit(main);
+
+		title->setAlignment(Qt::AlignCenter);
+		title->setStyleSheet(cssTitle);
+		title->setFixedHeight(50);
+		LeftWidgetPage_2_Task2->setVisible(false);
+		LeftWidgetPage_2_Task2->setStyleSheet(cssWidget);
+		LeftWidgetPage_2_Task2Layout->setAlignment(Qt::AlignTop);
+		mainLayout->setAlignment(Qt::AlignCenter);
+		mainLayout->setColumnStretch(0, 1);
+		mainLayout->setColumnStretch(1, 1);
+		startV->setStyleSheet(csslabel);
+		inputStartV->setStyleSheet(cssEditLine);
+		inputGraf->setStyleSheet(cssEditText);
+		resultButton->setStyleSheet(CssButton);
+		resultArea->setStyleSheet(cssEditText);
+		startV->setAlignment(Qt::AlignCenter);
+		inputStartV->setFont(FontForText);
+		inputGraf->setFont(FontForText);
+		resultArea->setFont(FontForText);
+		inputGraf->setPlaceholderText(
+			"V1 V2 1\n"
+			"V2 V3 0\n"
+			"V3 V1 1\n"
+		);
+		inputStartV->setPlaceholderText("V1");
+		if (!atributes.isEmpty() && atributes[0] == "--st") {
+			inputStartV->setText("A1");
+			inputGraf->setText(
+				"A1 A2 0\n"
+				"A1 A3 0\n"
+				"A2 At 0\n"
+				"A3 A4 0\n"
+				"At Ak 0\n"
+				"A4 A6 1\n"
+				"Ak A11 0\n"
+				"A6 A5 1\n"
+				"A5 A11 0\n"
+				"A5 A22 0\n"
+				"B1 B2 1\n"
+				"C1 C2 0"
+			);
+		}
+		resultArea->setEnabled(false);
+		connect(resultButton, &QPushButton::released, [&dialog, inputGraf, inputStartV, resultArea]() {
+			if (resultArea->toPlainText().size() != 0) resultArea->clear();
+			if (inputStartV->text().isEmpty() || inputGraf->toPlainText().isEmpty()) {
+				QMessageBox::warning(dialog, "Попередження", "\nНемає данних!");
+				return;
+			}
+			QString startV;
+			QStringList input;
+			struct V_V_d {
+				QString From;
+				QString To;
+				int is_directed;
+				V_V_d(const QString& From, const QString& To, int is_directed) : From(From), To(To), is_directed(is_directed) {}
+			};
+			QVector<V_V_d> buffer;
+			try {
+				startV = inputStartV->text();
+				input = inputGraf->toPlainText().split("\n");
+				for (int i = 0; i < input.size(); i++) {
+					QStringList tmp = input[i].split(QRegularExpression("\\s+"));
+					if (tmp.size() < 3) throw int(1);
+					buffer.push_back(V_V_d(tmp[0], tmp[1], tmp[2].toInt()));
+				}
+			}
+			catch (const int& ex) {
+				if (ex == 1) {
+					QMessageBox::critical(dialog, "Помилка", "\nВведено данні, які не можна обробити!");
+				}
+				return;
+			}
+			no_weighted_graph<QString> graph;
+			for (int i = 0; i < buffer.size(); i++) {
+				graph.add(buffer[i].From, buffer[i].To, buffer[i].is_directed);
+			}
+
+			if (!graph.isVertex(startV)) {
+				resultArea->setTextColor(QColor(255, 0, 0));
+				resultArea->setText("Заданої вершини немає");
+				return;
+			}
+			//класифікація ребер
+			});
+
+		mainLayout->addWidget(startV, 0, 0, 1, 1, Qt::AlignVCenter);
+		mainLayout->addWidget(inputStartV, 0, 1, 1, 1, Qt::AlignTop);
+		mainLayout->addWidget(inputGraf, 1, 0, 1, 2, Qt::AlignTop);
+		mainLayout->addWidget(resultButton, 2, 0, 1, 2, Qt::AlignTop);
+		mainLayout->addWidget(resultArea, 3, 0, 1, 2, Qt::AlignTop);
+		LeftWidgetPage_2_Task2Layout->addWidget(title, 0, 0, Qt::AlignTop);
+		LeftWidgetPage_2_Task2Layout->addWidget(main, 1, 0, Qt::AlignTop);
+	};
+	auto RightWidgetTask_3 = [&RightWidgetPage_2_Task3, &RightWidgetPage_2_Task3Layout, &dialog, this]() {
+
+		QLabel* title = new QLabel("Задача 3.Г", RightWidgetPage_2_Task3);
+		QWidget* main = new QWidget(RightWidgetPage_2_Task3); QGridLayout* mainLayout = new QGridLayout(main);
+		QLabel* startV = new QLabel("Початкова дисципліна", main);
+		QLineEdit* inputStartV = new QLineEdit(main);
+		QTextEdit* inputGraf = new QTextEdit(main);
+		QPushButton* result = new QPushButton("Результат", main);
+		QTextEdit* resultArea = new QTextEdit(main);
+		QRegularExpression regexForInputGraph("^([^:\\-> ]+\\s+(:|(->))\\s+[^:\\->\\n ]+\\{\\n[^{}]+\\n\\}\\n)+$", QRegularExpression::DotMatchesEverythingOption);
+		QRegularExpression regexForLineEdit("^[^:\\->]+$");
+		title->setAlignment(Qt::AlignCenter);
+		title->setStyleSheet(cssTitle);
+		title->setFixedHeight(50);
+		RightWidgetPage_2_Task3->setVisible(false);
+		RightWidgetPage_2_Task3->setStyleSheet(cssWidget);
+		RightWidgetPage_2_Task3Layout->setAlignment(Qt::AlignTop);
+		mainLayout->setColumnStretch(0, 1);
+		mainLayout->setColumnStretch(1, 1);
+		startV->setStyleSheet(csslabel);
+		inputStartV->setStyleSheet(cssEditLine);
+		inputStartV->setFont(FontForText);
+		startV->setAlignment(Qt::AlignCenter);
+		mainLayout->setAlignment(Qt::AlignTop);
+		inputGraf->setStyleSheet(cssEditText);
+		inputGraf->setFont(FontForText);
+		result->setStyleSheet(CssButton);
+		resultArea->setStyleSheet(cssEditText);
+		resultArea->setEnabled(false);
+		resultArea->setFont(FontForText);
+		inputGraf->setPlaceholderText(
+			"From : To {\n"
+			"будь-які данні\n"
+			"будь-які данні\n"
+			"}\n\n"
+			"Математика -> Вища_математика {\n"
+			"Геометрія\n"
+			"Алгебра\n"
+			"}\n"
+		);
+		if (!atributes.isEmpty() && atributes[0] == "--st") {
+			inputStartV->setText("Математика");
+			inputGraf->setText(
+				"Математика : Вища_математика {\n"
+				"Алгебра, геометрія, критичне мислення, похідні\n"
+				"}\n"
+				"\n"
+				"Математика : Малювання {\n"
+				"Функції, Розвинена уява, вміння рахувати\n"
+				"}\n"
+				"\n"
+
+				"Вища_математика : Основи_програмування {\n"
+				"Обчислення, вміти користуватись калькулятором, думати\n"
+				"}\n"
+				"\n"
+				"Основи_програмування : Алгоритми_та_структури_данних {\n"
+				"Знати будь-яку мову мову програмування та вміти її використовувати, розуміння що таке алгоритм та структури данних\n"
+				"}\n"
+				"\n"
+				"Малювання : 3D_Моделювання{\n"
+				"Вміти продумувати об\'єкти та малювати їх, розуміти палітри кольорів, градієнти, розуміти масштаби та розміри об'єктів\n"
+				"}\n"
+				"\n"
+				"Основи_програмування : 3D_Моделювання {\n"
+				"Вміти продумувати об\'єкти та малювати їх, розуміти палітри кольорів, градієнти, розуміти масштаби та розміри об'єктів\n"
+				"}\n"
+
+			);
+		}
+
+		connect(result, &QPushButton::released, [&dialog, inputGraf, regexForInputGraph, regexForLineEdit, inputStartV, resultArea]() {
+			if (!resultArea->toPlainText().isEmpty()) {
+				resultArea->clear();
+			}
+			if (inputStartV->text().isEmpty() || inputGraf->toPlainText().isEmpty()) {
+				QMessageBox::warning(dialog, "Попередження", "\nНемає данних!");
+				return;
+			}
+			QStringList input = inputGraf->toPlainText().split("\n");
+			QRegularExpression regex(":|(->)");
+			QString startV = inputStartV->text();
+			QStringList vertex;
+			for (int i = 0; i < input.size(); i++) {
+				if (!input[i].isEmpty() && input[i][input[i].size() - 1] == "{") {
+					vertex.push_back(input[i].split(regex)[0]); vertex.back().remove(" ");
+					vertex.push_back(input[i].split(regex)[1]); vertex.back().remove(" ");
+					vertex.back().remove("{");
+				}
+			}
+			no_weighted_graph<QString> graph;
+			for (int i = 0; i < vertex.size(); i+=2) {
+				graph.add(vertex[i], vertex[i + 1], 1);
+			}
+			if (!graph.isVertex(startV)) {
+				resultArea->setTextColor(QColor(255, 0, 0));
+				resultArea->setText("Заданої вершини немає");
+				resultArea->setTextColor(QColor(255, 255, 255));
+				return;
+			}
+			forest<QString> f = graph.BFS(startV);
+			for (int i = 0; i < f.size(); i++) {
+				vector<QString> way = f.getTreeWalkBFS(i);
+				for (int j = 0; j < way.size(); j++) {
+					if (j + 1 >= way.size()) {
+						resultArea->insertPlainText(way[j]);
+					}
+					else resultArea->insertPlainText(way[j] + " -> ");
+				}
+			}
+			});
+		mainLayout->addWidget(startV, 0, 0, 1, 1, Qt::AlignVCenter);
+		mainLayout->addWidget(inputStartV, 0, 1, 1, 1, Qt::AlignTop);
+		mainLayout->addWidget(inputGraf, 1, 0, 1, 2, Qt::AlignTop);
+		mainLayout->addWidget(result, 2, 0, 1, 2, Qt::AlignTop);
+		mainLayout->addWidget(resultArea, 3, 0, 1, 2, Qt::AlignTop);
+		RightWidgetPage_2_Task3Layout->addWidget(title, 0, 0, Qt::AlignTop);
+		RightWidgetPage_2_Task3Layout->addWidget(main, 1, 0, Qt::AlignTop);
+	};
+	auto BottomButtonsForPage_1_2 = [&BottomPagination, &BottomPaginationLayout,  &buttonForLeft, &buttonForRight,
+		&LeftWidgetPage_2_Task2, &LeftWidgetPage_1_DFS_BFS, &RightWidgetPage_1_Task1, &RightWidgetPage_2_Task3]() {
+		buttonForLeft->setIcon(QIcon("icons/leftArrow.png"));
+		buttonForRight->setIcon(QIcon("icons/RightArrow.png"));
+		
+		buttonForLeft->setFixedSize(40, 40);
+		buttonForRight->setFixedSize(40, 40);
+		buttonForLeft->setIconSize(QSize(38, 38));
+		buttonForRight->setIconSize(QSize(38, 38));
+
+		BottomPagination->setStyleSheet(cssWidget);
+		buttonForLeft->setStyleSheet(cssButtonNavigate);
+		buttonForRight->setStyleSheet(cssButtonNavigate);
+		enum CurrentPage {
+			Page_1,
+			Page_2
+		};
+		static CurrentPage Page = CurrentPage::Page_1; 
+		connect(buttonForRight, &QPushButton::released, [&]() {
+			bool Page_1IsActive = Page == CurrentPage::Page_1;
+			LeftWidgetPage_2_Task2->setVisible(Page_1IsActive);
+			RightWidgetPage_2_Task3->setVisible(Page_1IsActive);
+			LeftWidgetPage_1_DFS_BFS->setVisible(!Page_1IsActive);
+			RightWidgetPage_1_Task1->setVisible(!Page_1IsActive);
+			Page = (Page_1IsActive) ? CurrentPage::Page_2 : CurrentPage::Page_1;
+			});
+		connect(buttonForLeft, &QPushButton::released, [&]() {
+			bool Page_1IsActive = Page == CurrentPage::Page_1;
+			LeftWidgetPage_2_Task2->setVisible(Page_1IsActive);
+			RightWidgetPage_2_Task3->setVisible(Page_1IsActive);
+			LeftWidgetPage_1_DFS_BFS->setVisible(!Page_1IsActive);
+			RightWidgetPage_1_Task1->setVisible(!Page_1IsActive);
+			Page = (Page_1IsActive) ? CurrentPage::Page_2 : CurrentPage::Page_1;
+			});
+		BottomPaginationLayout->addWidget(buttonForLeft, 0, 0, Qt::AlignRight);
+		BottomPaginationLayout->addWidget(buttonForRight, 0, 1, Qt::AlignLeft);
+	};
+
+	LeftWidgetDFS_BFS();
+	RightWidgetTask_1();
+	LeftWidgetTask_2();
+	RightWidgetTask_3();
+
+	BottomButtonsForPage_1_2();
+	dialogLayout->setRowStretch(0, 15);
+	dialogLayout->setRowStretch(1, 1);
+	dialogLayout->setColumnStretch(0, 1);
+	dialogLayout->setColumnStretch(1, 1);
+	dialogLayout->addWidget(LeftWidgetPage_1_DFS_BFS, 0, 0);
+	dialogLayout->addWidget(RightWidgetPage_1_Task1, 0, 1);
+	dialogLayout->addWidget(BottomPagination, 1, 0, 1, 2);
+	dialogLayout->addWidget(LeftWidgetPage_2_Task2, 0, 0);
+	dialogLayout->addWidget(RightWidgetPage_2_Task3, 0, 1);
 
 	dialog->exec();
 }

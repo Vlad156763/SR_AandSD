@@ -71,6 +71,15 @@
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <PostBuildEvent>
+      <Command>
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PostBuildEvent>
+      <Command>C:\My_file\programming_libraries\C++\Qt\6.8.0\msvc2022_64\bin\windeployqt.exe --debug "$(TargetDir)$(TargetName).exe"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -111,6 +120,7 @@
     <ClInclude Include="lib\algorithms.h" />
     <ClInclude Include="lib\Console.h" />
     <ClInclude Include="lib\exceptions.h" />
+    <ClInclude Include="lib\algorithms.hpp" />
     <ClInclude Include="mainWIndow.h" />
     <ClInclude Include="test.h" />
   </ItemGroup>

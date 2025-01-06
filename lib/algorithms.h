@@ -1,22 +1,88 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
-#include <fstream>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <vector>
-#include <string>
+#include <fstream> //для файлів
+#include <unordered_map> //для швидкого пошуку пар ключ-значення
+#include <unordered_set> //для швидкого пошуку елементу
+#include <queue> // для алгоритму BFS
+#include <vector> 
+#include <string> 
 #include <iostream>
 #include "exceptions.h"
 #include "Console.h"
+
 using std::unordered_map;
 using std::unordered_set;
 using std::fstream;
 using std::priority_queue;
+using std::queue;
 using std::vector;
-using std::string; 
-using std::pair;
+using std::string;
 using std::cout;
+
+class methodHuffman;
+template<typename VERTEX> class ForestNode;
+template<typename VERTEX> class forest;
+template<typename Compare> class quickSort;
+template<typename VERTEX> class no_weighted_graph;
+
+
+namespace CEG { // класифікація ребер графів
+	enum stateVertex {
+		No_visited,
+		Active,
+		Visited
+	};
+	enum stateEdge {
+		Tree_edge,
+		Back_edge,
+		Forward_edge,
+		Cross_edge
+	};
+	template<typename VERTEX> struct triple {
+		VERTEX From = VERTEX();
+		VERTEX To = VERTEX();
+		stateEdge typeEdge;
+		triple(VERTEX From, VERTEX To, stateEdge typeEdge) : From(From), To(To), typeEdge(typeEdge) {}
+	};
+	template<typename VERTEX> struct pair {
+		VERTEX To = VERTEX();
+		stateVertex state = No_visited;
+		pair(VERTEX To, stateVertex state = stateVertex::No_visited) : To(To), state(state) {}
+	};
+}
+
+template<typename VERTEX>
+class ForestNode {
+private:
+	VERTEX v = VERTEX();
+	vector<ForestNode<VERTEX>*> child;
+public:
+	inline void setVertex(const VERTEX& vertex);
+	ForestNode<VERTEX>* addChild(VERTEX vertex);
+	inline VERTEX& getVertex();
+	inline vector<ForestNode<VERTEX>*>& childData();
+};
+
+template<typename VERTEX> class forest {
+private:
+	vector<ForestNode<VERTEX>*> d;
+	void deleteTree(ForestNode<VERTEX>* root);
+	void walkTreeRecursion(vector<vector<VERTEX>>& paths, ForestNode<VERTEX>* currentNode);
+	void walkTreeBFS(vector<VERTEX>& paths, ForestNode<VERTEX>* currentNode);
+
+public:
+	forest();
+	ForestNode<VERTEX>* addRoot(const VERTEX& val);
+	[[nodiscard]]
+	vector<vector<VERTEX>> getTreeWalkDFS(int indexTree);
+	[[nodiscard]]
+	vector<VERTEX> getTreeWalkBFS(int indexTree);
+	inline size_t size() const;
+	[[nodiscard]]
+	inline vector<ForestNode<VERTEX>*>& data();
+	forest(const forest<VERTEX>& other);
+	~forest();
+};
 
 class methodHuffman {
 private:
@@ -33,7 +99,6 @@ private:
 		bool operator ()(node*, node*);
 	};
 
-
 private:
 	unordered_map<char, int> order;
 	void DeleteAllNode(node*);
@@ -45,212 +110,34 @@ public:
 };
 
 template<typename Compare> class quickSort {
-	Compare compare;
+	Compare compare = Compare();
 public:
-	quickSort();
 	template<typename T> void sort(T* array, const int& left, const int& right);
 };
 
-template<typename Compare> quickSort<Compare>::quickSort() {}
-template<typename Compare> template<typename T> void quickSort<Compare>::sort(T* array, const int& left, const int& right) {
-	T buffer;
-	int i = left;
-	int j = right;
-	T pivot = array[(i + j) / 2];
-	while (i <= j)
-	{
-		while (compare(array[i], pivot)) ++i;
-		while (compare(pivot, array[j])) --j;
-		if (i <= j) {
-			buffer = array[i];
-			array[i] = array[j];
-			array[j] = buffer;
-			++i;
-			--j;
-		}
-	}
-	if (j > left) sort(array, left, j);
-	if (i < right) sort(array, i, right);
-}
-
-
-namespace {
-	template<typename VERTEX>
-	class ForestNode {
-	private:
-		VERTEX v;
-		vector<ForestNode<VERTEX>*> child;
-	public:
-		ForestNode() {}
-		inline void setVertex(const VERTEX& v) { this->v = v; }
-		ForestNode<VERTEX>* addChild(const VERTEX& child) {
-			ForestNode<VERTEX>* newChild = new ForestNode<VERTEX>();
-			newChild->setVertex(child);
-			this->child.push_back(newChild);
-			return this->child.back();
-		}
-		inline VERTEX getVertex() { return this->v; }
-		inline vector<ForestNode<VERTEX>*>& childData() { return this->child; }
-	};
-	template<typename VERTEX> class forest {
-	private:
-		vector<ForestNode<VERTEX>*> d;
-		void deleteTree(ForestNode<VERTEX>* root) {
-			for (int i = 0; i < root->childData().size(); i++) {
-				deleteTree(root->childData()[i]);
-			}
-			delete root;
-		}
-		void walkTreeRecursion(vector<vector<VERTEX>>& paths, ForestNode<VERTEX>& currentNode) {
-			static vector<VERTEX> currentWay;
-			currentWay.push_back(currentNode.getVertex());
-			if (currentNode.childData().size() == 0) {
-				paths.push_back(currentWay);
-				currentWay.pop_back();
-				return;
-			}
-			for (int i = 0; i < currentNode.childData().size(); i++) {
-				walkTreeRecursion(paths, *currentNode.childData()[i]);
-			}
-			currentWay.pop_back();
-		}
-	public:
-		forest() {}
-		ForestNode<VERTEX>* addRoot(const VERTEX& val) {
-			ForestNode<VERTEX>* newRoot = new ForestNode<VERTEX>();
-			newRoot->setVertex(val);
-			this->d.push_back(newRoot);
-			return newRoot;
-		}
-		vector<vector<VERTEX>> getTreeWalk(int indexTree) {
-			if (this->d.size() <= indexTree) throw ex("Індекс не дійсний");
-			vector<vector<VERTEX>> pathsInTree;
-			walkTreeRecursion(pathsInTree, *(this->d[indexTree]));
-			return pathsInTree;
-
-		}
-		size_t size() { return this->d.size(); }
-		~forest() {
-			for (int i = 0; i < this->d.size(); i++) {
-				deleteTree(this->d[i]);
-			}
-		}
-	};
-}
-
-
-
-template<typename VERTEX>class no_weighted_graph {
+template<typename VERTEX> class no_weighted_graph {
 private:
 	unordered_map<VERTEX, vector<VERTEX>> d;
-
-	
 public:
-	no_weighted_graph() {}
+	//поверне true якщо задана вершина є у графі
+	bool isVertex(const VERTEX& V);
 	//directed може бути "<-", "->", "<->", інакше кидає виключення ex("Невірний символ орієнтації ребра")
-	void add(const VERTEX& From, const char* directed,  const VERTEX& To) {
-		if (directed == "->") {
-			this->d[From].push_back(To);
-		}
-		else if (directed == "<-") {
-			this->d[To].push_back(From);
-		}
-		else if (directed == "<->") {
-			this->d[From].push_back(To);
-			this->d[To].push_back(From);
-		}
-		else {
-			throw ex("Невірний символ орієнтації ребра");
-		}
-	}
+	void add(const VERTEX& From, const char* directed, const VERTEX& To);
 	//is_directed відповідає за орієнтацію ребра, якщо вказано 1 тоді порядок вершин важливий
 	//From To (орієнтоване_ребро) From -> To
-	void add(const VERTEX& From, const VERTEX& To, bool is_directed) {
-		if (!is_directed) {
-			this->d[To].push_back(From);
-		}
-		this->d[From].push_back(To);
-	}
-	vector<VERTEX>& operator[](const VERTEX& Vertex) {
-		return this->d.at(Vertex);
-	}
-	//повертає кубічний масив [підграф][шлях][вершини]
+	void add(const VERTEX& From, const VERTEX& To, bool is_directed);
+	vector<VERTEX>& operator[](const VERTEX& Vertex);
 	//якщо вершини немає, кидає виключення ex("Вершини немає")
-	vector<vector<vector<VERTEX>>> DFS(VERTEX startV) {
-		if (this->d.find(startV) == this->d.end()) {
-			throw ex("Вершини немає");
-		}
-		unordered_set<VERTEX> visited;//відвідані вершини
-		forest<VERTEX> forestTreeResult;
-		bool exit = false; 
-		bool was_in_loop = false;
-		while (!exit) {
-			was_in_loop = false;
-			DFSRecursion(startV, startV, visited, forestTreeResult);
-			//перевіряю кожну вершину чи є вона у масиві відвіданих, якщо якоїсь вершини немає, повторюю рекурсивний обхід у глибину
-			//для зв'язаних вершин доти, доки всі вершини будуть відвіданими
-			for (auto& key : this->d) {
-				if (visited.find(key.first) == visited.end()) {
-					startV = key.first;
-					was_in_loop = true;
-					break;
-				}
-			}
-			if (!was_in_loop) break;
-		}
-		vector<vector<vector<VERTEX>>> result;
-		for (int i = 0; i < forestTreeResult.size(); i++) {
-			result.push_back(forestTreeResult.getTreeWalk(i));
-		}
-		return result;
-	}
+	[[nodiscard]]
+	forest<VERTEX> DFS(VERTEX startV);
+	[[nodiscard]]
+	forest<VERTEX> BFS(VERTEX startV);
+	void classificationEdges(VERTEX startV);
 private:
-	void DFSRecursion(
-		const VERTEX& startV, 
-		const VERTEX& To,  
-		unordered_set<VERTEX>& visited, 
-		forest<VERTEX>& forestTreeResult,
-		ForestNode<VERTEX>* currentNode = nullptr
-	) {
-		if (visited.find(startV) != visited.end()) { 
-			return; 
-		}
-		if (startV == To) { 
-			currentNode = forestTreeResult.addRoot(startV);
-		} else 
-			currentNode = currentNode->addChild(startV);
-		visited.insert(startV);
-		// якщо вершини немає, треба це відслідковувати
-		if (this->d.find(startV) != this->d.end()) {
-			for (const auto& v : this->d.find(startV)->second) {
-				DFSRecursion(v, startV, visited, forestTreeResult, currentNode);
-			}
-		}
-	}
+	void DFSRecursion(const VERTEX& startV, const VERTEX& To, unordered_set<VERTEX>& visited, forest<VERTEX>& forestTreeResult, ForestNode<VERTEX>* currentNode = nullptr);
+	void BFSSecondary(const VERTEX& startV, forest<VERTEX>& forestTreeResult, unordered_set<VERTEX>& visited);
+	void DFSRecursionForClassification(const VERTEX& startV, unordered_map<VERTEX, CEG::stateVertex>& visited, vector<CEG::triple<VERTEX>>& result, unordered_map<VERTEX, vector<VERTEX>>& copy_d);
 };
 
-//template<typename VERTEX, typename WEIGHT> class edgeWithWeight {
-//private:
-//	VERTEX From;
-//	VERTEX To;
-//	bool is_directed = false;
-//	WEIGHT Weight;
-//public:
-//	edgeWithWeight(const VERTEX& From, const VERTEX& To, const WEIGHT& Weight, bool is_directed) {
-//		this->From = From;
-//		this->To = To;
-//		this->is_directed = is_directed;
-//	}
-//
-//};
-//template<typename VERTEX, typename WEIGHT> class weighted_graph {
-//private:
-//	vector<edgeWithWeight<VERTEX, WEIGHT>> edges;
-//public:
-//	weighted_graph() {}
-//	void push_back(const VERTEX& From, const VERTEX& To, const WEIGHT& Weight, bool is_directed) {
-//		this->edges.push_back(edgeWithWeight<VERTEX, WEIGHT>(From, To, Weight, is_directed));
-//	}
-//};
-
+#include "algorithms.hpp" //реалізація всіх шаблонних класів
 #endif // !ALGORITHMS_H

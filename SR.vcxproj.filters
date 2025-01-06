@@ -55,5 +55,8 @@
     <ClInclude Include="lib\algorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lib\algorithms.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

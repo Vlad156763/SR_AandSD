@@ -17,6 +17,7 @@
 #include <qvector.h>
 #include <qdebug.h>
 
+
 #include "lib/algorithms.h"
 #include "lib/Console.h"
 #include "lib/exceptions.h"
@@ -30,8 +31,10 @@ using std::cout;
 class ui :public QWidget {
 private:
 	QGridLayout* mainLayout = nullptr;
+	QVector<QString> atributes;
 public:
 	ui(QWidget* = nullptr);
+	void setAtributes(const QVector<QString>& atr);
 public slots:
 	void piramidalSortPressed();
 	void structDataPressed();

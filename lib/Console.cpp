@@ -19,6 +19,9 @@ int out::getCol() { return getConsoleScreenBufferInfo().dwCursorPosition.X; }
 int out::windowXmax() {
     return getConsoleScreenBufferInfo().dwMaximumWindowSize.X;
 }
+int out::windowYmax() {
+    return getConsoleScreenBufferInfo().dwMaximumWindowSize.Y;
+}
 
 static CONSOLE_SCREEN_BUFFER_INFO getConsoleScreenBufferInfo() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

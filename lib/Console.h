@@ -14,6 +14,7 @@ namespace out {
 	int getRow();
 	int getCol();
 	int windowXmax();
+	int windowYmax();
 }
 static CONSOLE_SCREEN_BUFFER_INFO getConsoleScreenBufferInfo();
 #endif // !CONSOLE_H
