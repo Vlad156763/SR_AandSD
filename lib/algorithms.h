@@ -27,27 +27,51 @@ template<typename VERTEX> class no_weighted_graph;
 
 
 namespace CEG { // класифікація ребер графів
-	enum stateVertex {
-		No_visited,
-		Active,
-		Visited
-	};
 	enum stateEdge {
 		Tree_edge,
 		Back_edge,
 		Forward_edge,
 		Cross_edge
 	};
+	enum TypeVertex {
+		No_visited,
+		Active,
+		Visited
+	};
+	struct stateVertex {
+		TypeVertex type = No_visited;
+		int counter = 0;
+		stateVertex() = default;
+		stateVertex(TypeVertex type, int counter) : counter(counter), type(type) {}
+	};
+	
 	template<typename VERTEX> struct triple {
 		VERTEX From = VERTEX();
 		VERTEX To = VERTEX();
 		stateEdge typeEdge;
 		triple(VERTEX From, VERTEX To, stateEdge typeEdge) : From(From), To(To), typeEdge(typeEdge) {}
+		triple(const triple& other) { this->From = other.From; this->To = other.To; this->typeEdge = other.typeEdge; }
+		const char* typeEdgeTo_c_str() const {
+			switch (this->typeEdge) {
+			case Tree_edge: return "Tree_edge"; 
+			case Back_edge: return "Back_edge"; 
+			case Forward_edge: return "Forward_edge";
+			case Cross_edge: return "Cross_edge";
+			default:return "Unknown";
+			}
+		}
 	};
 	template<typename VERTEX> struct pair {
+		VERTEX From = VERTEX();
 		VERTEX To = VERTEX();
-		stateVertex state = No_visited;
-		pair(VERTEX To, stateVertex state = stateVertex::No_visited) : To(To), state(state) {}
+		pair(const VERTEX& From, const VERTEX& To) : From(From), To(To) {}
+		pair(const pair& other) { this->From = other.From; this->To = other.To; }
+		bool operator==(const pair& other) const { return From == other.From && To == other.To; }
+	};
+}
+namespace std {
+	template<typename VERTEX> struct hash<CEG::pair<VERTEX>> {
+		size_t operator()(const CEG::pair<VERTEX>& p) const { return hash<VERTEX>()(p.From) ^ (hash<VERTEX>()(p.To) << 1); }
 	};
 }
 
@@ -130,13 +154,17 @@ public:
 	//якщо вершини немає, кидає виключення ex("Вершини немає")
 	[[nodiscard]]
 	forest<VERTEX> DFS(VERTEX startV);
+	//якщо вершини немає, кидає виключення ex("Вершини немає")
 	[[nodiscard]]
 	forest<VERTEX> BFS(VERTEX startV);
-	void classificationEdges(VERTEX startV);
+	//якщо вершини немає, кидає виключення ex("Вершини немає")
+	[[nodiscard]]
+	vector<CEG::triple<VERTEX>> classificationEdges(VERTEX startV, bool& graphHasLoop);
 private:
 	void DFSRecursion(const VERTEX& startV, const VERTEX& To, unordered_set<VERTEX>& visited, forest<VERTEX>& forestTreeResult, ForestNode<VERTEX>* currentNode = nullptr);
 	void BFSSecondary(const VERTEX& startV, forest<VERTEX>& forestTreeResult, unordered_set<VERTEX>& visited);
-	void DFSRecursionForClassification(const VERTEX& startV, unordered_map<VERTEX, CEG::stateVertex>& visited, vector<CEG::triple<VERTEX>>& result, unordered_map<VERTEX, vector<VERTEX>>& copy_d);
+	void DFSRecursionForClassification(const VERTEX& startV, unordered_map<VERTEX, CEG::stateVertex>& visited, vector<CEG::triple<VERTEX>>& result, bool& graphHasLoop);
+	bool edgeIsDirected(const VERTEX& From, const VERTEX& To);
 };
 
 #include "algorithms.hpp" //реалізація всіх шаблонних класів

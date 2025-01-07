@@ -136,9 +136,8 @@ template<typename VERTEX> forest<VERTEX> no_weighted_graph<VERTEX>::DFS(VERTEX s
 	}
 	unordered_set<VERTEX> visited;//відвідані вершини
 	forest<VERTEX> forestTreeResult;
-	bool exit = false;
 	bool was_in_loop = false;
-	while (!exit) {
+	while (true) {
 		was_in_loop = false;
 		DFSRecursion(startV, startV, visited, forestTreeResult);
 		//перевіряю кожну вершину чи є вона у масиві відвіданих, якщо якоїсь вершини немає, повторюю рекурсивний обхід у глибину
@@ -214,33 +213,20 @@ template<typename VERTEX> void no_weighted_graph<VERTEX>::BFSSecondary(const VER
 		qResult.pop();
 	}
 }
-template<typename VERTEX> void no_weighted_graph<VERTEX>::classificationEdges(VERTEX startV) {
+template<typename VERTEX> bool no_weighted_graph<VERTEX>::edgeIsDirected(const VERTEX& From, const VERTEX& To) {
+	return !(this->d.find(From) != this->d.end() && this->d.find(To) != this->d.end());
+}
+template<typename VERTEX> vector<CEG::triple<VERTEX>> no_weighted_graph<VERTEX>::classificationEdges(VERTEX startV, bool& graphHasloop) {
+	if (this->d.find(startV) == this->d.end()) {
+		throw ex("Вершини немає");
+	}
 	using namespace CEG;
 	vector<triple<VERTEX>> result;
-	unordered_map<VERTEX, vector<VERTEX>> copy_d;
-	for (auto key : this->d) {
-		vector<pair<VERTEX>> tmp;
-		for (int i = 0; i < key.second.size(); i++) {
-			tmp.push_back(pair(key.second[i]));
-		}
-		copy_d[key.first] = tmp;
-	}
 	unordered_map<VERTEX, stateVertex> visited;
-	
-
-
-
-	/*
-	обхід дерева в глибину
-	*/
-	
-
-	/*
-	bool exit = false;
 	bool was_in_loop = false;
-	while (!exit) {
+	while (true) {
 		was_in_loop = false;
-		DFSRecursion(startV, startV, visited, forestTreeResult);
+		this->DFSRecursionForClassification(startV, visited, result, graphHasloop);
 		//перевіряю кожну вершину чи є вона у масиві відвіданих, якщо якоїсь вершини немає, повторюю рекурсивний обхід у глибину
 		//для зв'язаних вершин доти, доки всі вершини будуть відвіданими
 		for (auto& key : this->d) {
@@ -252,44 +238,32 @@ template<typename VERTEX> void no_weighted_graph<VERTEX>::classificationEdges(VE
 		}
 		if (!was_in_loop) break;
 	}
-	*/
-	
-
-
-	/*
-	1. DFS
-	2. Спочатку всі вершини невідвідані
-	3. Починаючи з вершини startV позначаю її сірою. Рухаючись у глиб кожну білу вершину позначаю сірою і кожне ребро між вершинами вважаю ребром дерева.
-	4. Якщо при русі в глибину знайдено сіру вершину, позначаю ребро яке є між сірими вершинами - ребром назад і записую що граф має цикл 
-	5. Якщо при русі в глибину знайдено чорну вершину, позначаю ребро яке є між сірою та чорною вершинами - ребром вперед 
-	6. неорієновані графи матимуть тільки ребра дерева і ребра назад
-	*/
-
+	return result;
 }
-
-template<typename VERTEX> void no_weighted_graph<VERTEX>::DFSRecursionForClassification(const VERTEX& startV, unordered_map<VERTEX, CEG::stateVertex>& visited, vector<CEG::triple<VERTEX>>& result, unordered_map<VERTEX, vector<VERTEX>>& copy_d) {
-	static unordered_set<VERTEX> wayDFS;
-	wayDFS.insert(startV);
-	if (visited.find(startV) != visited.end()) { return; }
-	visited[startV] = CEG::stateVertex::Active;
+template<typename VERTEX> void no_weighted_graph<VERTEX>::DFSRecursionForClassification(const VERTEX& startV, unordered_map<VERTEX, CEG::stateVertex>& visited, vector<CEG::triple<VERTEX>>& result, bool& graphHasLoop) {
+	static int _Counter = 0; //для порядку проходження вершин графа
+	static unordered_map<CEG::pair<VERTEX>, CEG::stateEdge> tmp; //будь яка вершина може мати тільки одну класифікацію
+	visited[startV] = CEG::stateVertex(CEG::TypeVertex::Active, _Counter++);
 	// якщо ключа-вершини немає, це означає що вона не має шляхів кудись окрім одного, звідки прийшов алгоритм
-	if (copy_d.find(startV) != copy_d.end()) {
-		for (VERTEX& v : copy_d.find(startV)->second) {
-			if (visited.find(v) != visited.end() && visited[v] == CEG::stateVertex::Active) { // якщо вершина є у відвіданих і вона активна, то це ребро назад
-				result.push_back(CEG::triple(startV, v.To, CEG::stateEdge::Back_edge));
-				continue;
+	if (this->d.find(startV) != this->d.end()) {
+		for (VERTEX& v : this->d.find(startV)->second) {
+			if (visited.find(v) == visited.end()) {
+				result.push_back(CEG::triple(startV, v, CEG::stateEdge::Tree_edge));
+				tmp[CEG::pair(startV, v)] = CEG::stateEdge::Tree_edge;
+				DFSRecursionForClassification(v, visited, result, graphHasLoop);
+				visited[v].type = CEG::TypeVertex::Visited;
 			}
-			if (visited.find(v) != visited.end() && visited[v] == CEG::stateVertex::Visited) { // якщо вершина є у відвіданих і вона вже відвідана (її обробка завершена), то це ребро вперед
-				result.push_back(CEG::triple(startV, v.To, CEG::stateEdge::Cross_edge));
-				continue;
+			// якщо ребро між вершинами ще не класифіковане, вершина є у відвіданих, та вершина активна то це ребро назад
+			else if (tmp.find(CEG::pair(v, startV)) == tmp.end() && visited.find(v) != visited.end() && visited[v].type == CEG::TypeVertex::Active) {
+				result.push_back(CEG::triple(startV, v, CEG::stateEdge::Back_edge)); graphHasLoop = true;
 			}
-			if (wayDFS.find(v.To) != wayDFS.end()) { //якщо 
-
-			}
-			result.push_back(CEG::triple(startV, v.To, CEG::stateEdge::Tree_edge));
-			DFSRecursionForClassification(v.To, visited, result, copy_d);
-			v.state = CEG::stateVertex::Visited;
-			wayDFS.erase(v.To);
+			//якщо ребро між вершинами ще не класифіковане, то перевірка чи вершина відвідана
+			else if (tmp.find(CEG::pair(v, startV)) == tmp.end() && visited.find(v) != visited.end() && visited[v].type == CEG::TypeVertex::Visited) {
+				//якщо лічильник counter (який відповідає за порядок обходу графа) буде менший для поточної вершини, то це ребро вперед
+				if (visited[startV].counter < visited[v].counter) { result.push_back(CEG::triple(startV, v, CEG::stateEdge::Forward_edge)); } 
+				//всі інші ребра це ребра назад
+				else result.push_back(CEG::triple(startV, v, CEG::stateEdge::Cross_edge));
+			} 
 		}
 	}
 }

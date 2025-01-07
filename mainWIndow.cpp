@@ -782,7 +782,6 @@ void ui::SmallWayInGraphPressed() {
 		mainLeftLayout->setColumnStretch(1, 1);
 		resultArea->setFont(QFont("Courier"));
 		resultArea->setStyleSheet(cssEditText);
-		resultArea->setDisabled(true);
 		startVertex->setStyleSheet(cssEditLine);
 		textStartV->setStyleSheet(csslabel);
 		textStartV->setAlignment(Qt::AlignCenter);
@@ -858,6 +857,8 @@ void ui::SmallWayInGraphPressed() {
 			if (!graph.isVertex(startV)) {
 				resultArea->setTextColor(QColor(255, 0, 0));
 				resultArea->setText("Заданої вершини немає");
+				resultArea->setTextColor(QColor(255, 255, 255));
+
 				return;
 			}
 			forest<QString> f = (is_DFS) ? graph.DFS(startV) : graph.BFS(startV);
@@ -917,8 +918,8 @@ void ui::SmallWayInGraphPressed() {
 		inputGraph->setFont(FontForText);
 		resultArea->setFont(FontForText);
 		if (!atributes.isEmpty() && atributes[0] == "--st") {
-			endVinput->setText("A6");
-			startVInput->setText("A1");
+			endVinput->setText("A5");
+			startVInput->setText("A4");
 			inputGraph->setText(
 				"A1 A2 0\n"
 				"A1 A3 0\n"
@@ -934,7 +935,6 @@ void ui::SmallWayInGraphPressed() {
 				"C1 C2 0"
 			);
 		}
-		resultArea->setEnabled(false);
 		startVInput->setPlaceholderText("V1");
 		endVinput->setPlaceholderText("V3");
 		inputGraph->setPlaceholderText(
@@ -1018,6 +1018,7 @@ void ui::SmallWayInGraphPressed() {
 			if (!PathIsFind) {
 				resultArea->setTextColor(QColor(255, 0, 0));
 				resultArea->insertPlainText("Немає шляху!");
+				resultArea->setTextColor(QColor(255, 255, 255));
 			}
 			});
 	};
@@ -1059,19 +1060,20 @@ void ui::SmallWayInGraphPressed() {
 			inputGraf->setText(
 				"A1 A2 0\n"
 				"A1 A3 0\n"
-				"A2 At 0\n"
+				"A2 Ak 0\n"
 				"A3 A4 0\n"
-				"At Ak 0\n"
 				"A4 A6 1\n"
 				"Ak A11 0\n"
 				"A6 A5 1\n"
 				"A5 A11 0\n"
 				"A5 A22 0\n"
+				"A4 A5 1\n"
+				"A4 A1 1\n"
+				"A1 A6 1\n"
 				"B1 B2 1\n"
 				"C1 C2 0"
 			);
 		}
-		resultArea->setEnabled(false);
 		connect(resultButton, &QPushButton::released, [&dialog, inputGraf, inputStartV, resultArea]() {
 			if (resultArea->toPlainText().size() != 0) resultArea->clear();
 			if (inputStartV->text().isEmpty() || inputGraf->toPlainText().isEmpty()) {
@@ -1110,9 +1112,21 @@ void ui::SmallWayInGraphPressed() {
 			if (!graph.isVertex(startV)) {
 				resultArea->setTextColor(QColor(255, 0, 0));
 				resultArea->setText("Заданої вершини немає");
+				resultArea->setTextColor(QColor(255, 255, 255));
 				return;
 			}
-			//класифікація ребер
+			{
+				using namespace CEG; 
+				bool graphHasLoop;
+				vector<triple<QString>> tmp = graph.classificationEdges(startV, graphHasLoop);
+				for (int i = 0; i < tmp.size(); i++) {
+					resultArea->insertPlainText(tmp[i].From + " " + tmp[i].To + " " + QString(tmp[i].typeEdgeTo_c_str()) + out::endl);
+				}
+				if (graphHasLoop) {
+					resultArea->insertPlainText("Граф має принаймні один цикл");
+				}else resultArea->insertPlainText("Граф не має циклів");
+
+			}
 			});
 
 		mainLayout->addWidget(startV, 0, 0, 1, 1, Qt::AlignVCenter);
@@ -1151,7 +1165,6 @@ void ui::SmallWayInGraphPressed() {
 		inputGraf->setFont(FontForText);
 		result->setStyleSheet(CssButton);
 		resultArea->setStyleSheet(cssEditText);
-		resultArea->setEnabled(false);
 		resultArea->setFont(FontForText);
 		inputGraf->setPlaceholderText(
 			"From : To {\n"

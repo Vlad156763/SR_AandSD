@@ -44,24 +44,26 @@ int main(int argc, char** argv) {
 	int centerSR = (out::windowXmax() / 2) - (22 / 2);///22 це ширина виводу. 213 це ширина консолі 
 	int centerLB = (out::windowXmax() / 2) - (26 / 2);///26 це ширина виводу. 213 це ширина консолі 
 	if (SR) {
-			std::cout << out::rgb(200, 120, 60) 
-			 << out::move(out::getRow(), centerSR) + ",______,  ,______,   \n"
-			 << out::move(out::getRow(), centerSR) + "| ,____|  | ,___, \\ \n"
-			 << out::move(out::getRow(), centerSR) + "| |       | |___| |  \n"
-			 << out::move(out::getRow(), centerSR) + "| |       | ,_____/  \n"
-			 << out::move(out::getRow(), centerSR) + "| |____,  | |        \n"
-			 << out::move(out::getRow(), centerSR) + "|______|  |_|        \n"
+		std::cout << out::rgb(200, 120, 60) 
+			 << out::move(out::getRow(), centerSR) + " ,______,  ,______,  \n"
+			 << out::move(out::getRow(), centerSR) + " | ,____|  | ,___, \\\n"
+			 << out::move(out::getRow(), centerSR) + " | |       | |___| | \n"
+			 << out::move(out::getRow(), centerSR) + " | |       | ,_____/ \n"
+			 << out::move(out::getRow(), centerSR) + " | |____,  | |       \n"
+			 << out::move(out::getRow(), centerSR) + " |______|  |_|       \n"
 			<< out::endl;
 	}
 	else {
 		std::cout << out::rgb(60, 120, 120)
-			 << out::move(out::getRow(), centerLB) + "  ,_______,  ,________,  \n"
-			 << out::move(out::getRow(), centerLB) + " / ,____, |  | ,______|  \n"
-			 << out::move(out::getRow(), centerLB) + " | |    | |  | |_____,   \n"
-			 << out::move(out::getRow(), centerLB) + " | |    | |  | ,____, \\ \n"
-			 << out::move(out::getRow(), centerLB) + " | |    | |  | |____| |  \n"
-			 << out::move(out::getRow(), centerLB) + " /_/    |_|  |________/  \n"
+			 << out::move(out::getRow(), centerLB) + "  ,_______,  ,________, \n"
+			 << out::move(out::getRow(), centerLB) + " / ,____, |  | ,______| \n"
+			 << out::move(out::getRow(), centerLB) + " | |    | |  | |_____,  \n"
+			 << out::move(out::getRow(), centerLB) + " | |    | |  | ,____, \\\n"
+			 << out::move(out::getRow(), centerLB) + " | |    | |  | |____| | \n"
+			 << out::move(out::getRow(), centerLB) + " /_/    |_|  |________/ \n"
 			 << out::endl;
+
+
 	}
 	std::cout << out::reset;
 	do {
